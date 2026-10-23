@@ -1,0 +1,1470 @@
+/*
+ * Unified design token configuration
+ *
+ * PRUMO uses plain CSS. This file owns the shared palette, typography,
+ * spacing, and control presentation; legacy layers retain workspace layouts.
+ *
+ * Rules (rem values below assume the browser's default 16px root size):
+ * - Spacing: use the 4px-based scale below; no new arbitrary section spacing.
+ * - Content sections: 64px vertical padding; 96px from 48rem (768px).
+ * - Containers: centered, 80rem (1280px) maximum INCLUDING gutters; horizontal
+ *   gutters are 16px, increasing to 32px from 48rem. Nest inside ds-section.
+ * - Cards: 24px padding, increasing to 32px; 3px corners; subtle border/shadow.
+ * - Buttons/inputs: 2px corners. Reserve pill rounding for badges/avatars.
+ * - H1: 36/48px, serif 600, line-height 1.15; H2: 28/36px, serif 600, 1.2;
+ *   H3: 20/24px, serif 600, 1.3. Sizes switch at the same 48rem breakpoint.
+ * - Body: 16px sans 400/1.6; small: 14px/1.5; labels: 12px mono 700/1.5.
+ * - Borders: 1px solid subtle for cards; strong for controls; 2px focus ring.
+ * - Shadows: subtle on cards; raised only for floating panels/dialogs.
+ *
+ * Usage when a section is migrated:
+ *   <section className="ds-section ds-surface">
+ *     <div className="ds-container ds-stack">
+ *       <h1 className="ds-h1">...</h1>
+ *       <article className="ds-card ds-stack">
+ *         <h2 className="ds-h2">...</h2>
+ *         <p className="ds-body">...</p>
+ *         <div className="ds-cluster">
+ *           <button className="ds-button ds-button-primary">...</button>
+ *         </div>
+ *       </article>
+ *     </div>
+ *   </section>
+ *
+ * Shared primitives and the common page/form baseline own platform presentation.
+ * Legacy stylesheets are layered below this file and retain workspace layouts.
+ * Dark is the default. data-ds-theme="light" or "dark" explicitly selects a
+ * token palette for a subtree; ds-surface applies its page colors.
+ * No OS-driven theme changes. Both application entry points use this baseline.
+ * When migrating, replace overlapping legacy declarations rather than stacking
+ * these classes onto conflicting section rules. Dense map/tool layouts may use
+ * the spacing primitives without adopting content-section padding.
+ *
+ * CSS custom properties cannot supply media-query conditions. Keep the single
+ * literal 48rem breakpoint at the bottom in sync with this documented rule.
+ */
+
+:root {
+  --ds-space-0: 0;
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-8: 2rem;
+  --ds-space-10: 2.5rem;
+  --ds-space-12: 3rem;
+  --ds-space-16: 4rem;
+  --ds-space-20: 5rem;
+  --ds-space-24: 6rem;
+
+  --ds-container-max: 80rem;
+  --ds-container-gutter: var(--ds-space-4);
+  --ds-section-padding: var(--ds-space-16);
+  --ds-card-padding: var(--ds-space-6);
+  --ds-card-padding-compact: var(--ds-space-4);
+  --ds-container-narrow: 42rem;
+  --ds-crew-control-height: 3.75rem;
+  --ds-stack-gap: var(--ds-space-6);
+  --ds-cluster-gap: var(--ds-space-3);
+  --ds-control-height: 2.75rem;
+  --ds-control-height-sm: 2.25rem;
+  --ds-control-height-lg: 3.25rem;
+  --ds-control-press-offset: 1px;
+  --ds-control-disabled-opacity: 0.65;
+  --ds-duration-fast: 140ms;
+  --ds-easing-standard: ease;
+
+  --ds-radius-none: 0;
+  --ds-radius-control: 0.125rem;
+  --ds-radius-card: 0.1875rem;
+  --ds-radius-pill: 9999px;
+
+  --ds-font-body: Inter, "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --ds-font-heading:
+    "Iowan Old Style", "Palatino Linotype", Charter, Georgia, serif;
+  --ds-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --ds-weight-regular: 400;
+  --ds-weight-semibold: 600;
+  --ds-weight-bold: 700;
+  --ds-text-xs: 0.75rem;
+  --ds-text-sm: 0.875rem;
+  --ds-text-base: 1rem;
+  --ds-text-lg: 1.25rem;
+  --ds-text-xl: 1.5rem;
+  --ds-text-2xl: 1.75rem;
+  --ds-text-3xl: 2.25rem;
+  --ds-text-4xl: 3rem;
+  --ds-h1-size: var(--ds-text-3xl);
+  --ds-h2-size: var(--ds-text-2xl);
+  --ds-h3-size: var(--ds-text-lg);
+  --ds-h1-leading: 1.15;
+  --ds-h2-leading: 1.2;
+  --ds-h3-leading: 1.3;
+  --ds-body-leading: 1.6;
+  --ds-small-leading: 1.5;
+  --ds-heading-tracking: -0.025em;
+  --ds-label-tracking: 0.08em;
+
+  --ds-border-width: 1px;
+  --ds-border-style: solid;
+  --ds-focus-width: 2px;
+  --ds-focus-offset: 2px;
+  --ds-shadow-none: none;
+}
+
+/* Palette values are local to each theme boundary so nested themes work. */
+:root,
+[data-ds-theme="dark"] {
+  --ds-color-scheme: dark;
+  --ds-surface-page: #111e28;
+  --ds-surface-card: #182732;
+  --ds-surface-inset: #14252e;
+  --ds-text-primary: #e1e8eb;
+  --ds-text-secondary: #a2b3bd;
+  --ds-brand-accent: #91c3d5;
+  --ds-text-link: var(--ds-text-primary);
+  --ds-border-subtle: #304351;
+  --ds-border-strong: #3b5260;
+  --ds-action-bg: #2b4654;
+  --ds-action-hover: #355866;
+  --ds-action-active: #243b48;
+  --ds-surface-hover: #243b48;
+  --ds-surface-active: #2b4654;
+  --ds-action-text: #e1e8eb;
+  --ds-action-border: #527181;
+  --ds-focus-color: #91c3d5;
+  --ds-danger-bg: #432a2c;
+  --ds-danger-hover: #593338;
+  --ds-danger-active: #362124;
+  --ds-danger-text: #ffd0c5;
+  --ds-danger-border: #a96b70;
+  --ds-warning-bg: #3b3323;
+  --ds-warning-text: #f8e4a9;
+  --ds-success-bg: #18352f;
+  --ds-success-text: #a7ebbd;
+  --ds-shadow-card: 0 1px 2px rgb(4 10 16 / 16%);
+  --ds-shadow-raised: 0 8px 24px rgb(4 10 16 / 24%);
+}
+
+[data-ds-theme="light"] {
+  --ds-danger-bg: #f8e5e2;
+  --ds-danger-hover: #f1d4cf;
+  --ds-danger-active: #e9c4bd;
+  --ds-danger-text: #812d25;
+  --ds-danger-border: #a54c43;
+  --ds-warning-bg: #fff1d5;
+  --ds-warning-text: #684f18;
+  --ds-success-bg: #e2eee5;
+  --ds-success-text: #1e6040;
+  --ds-color-scheme: light;
+  --ds-surface-page: #f5f3eb;
+  --ds-surface-card: #fbfaf5;
+  --ds-surface-inset: #e7ebe5;
+  --ds-text-primary: #15201b;
+  --ds-text-secondary: #53645b;
+  --ds-brand-accent: var(--ds-text-primary);
+  --ds-text-link: #2e6d55;
+  --ds-border-subtle: #cbd2cb;
+  --ds-border-strong: #aeb8b0;
+  --ds-action-bg: #294d36;
+  --ds-action-hover: #1e3d2a;
+  --ds-action-active: #152e1e;
+  --ds-surface-hover: #dce3de;
+  --ds-surface-active: #cbd6ce;
+  --ds-action-text: #ffffff;
+  --ds-action-border: #294d36;
+  --ds-focus-color: #2e6d55;
+  --ds-shadow-card: 0 1px 2px rgb(16 29 23 / 6%);
+  --ds-shadow-raised: 0 8px 24px rgb(16 29 23 / 9%);
+}
+
+.ds-surface,
+.ds-surface[data-ui="section"],
+.ds-card[data-ui="card"] {
+  background: var(--ds-surface-page);
+  color: var(--ds-text-primary);
+  color-scheme: var(--ds-color-scheme);
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-base);
+  line-height: var(--ds-body-leading);
+}
+
+.ds-section,
+.ds-section[data-ui="section"] {
+  margin: 0;
+  border: 0;
+  padding-block: var(--ds-section-padding);
+}
+
+.ds-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--ds-container-max);
+  margin-inline: auto;
+  padding-inline: var(--ds-container-gutter);
+}
+
+.ds-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-stack-gap);
+}
+.ds-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-cluster-gap);
+}
+
+.ds-h1,
+.ds-h2,
+.ds-h3,
+[data-ui="typography"][data-variant="h1"],
+[data-ui="typography"][data-variant="h2"],
+[data-ui="typography"][data-variant="h3"] {
+  margin: 0;
+  color: var(--ds-text-primary);
+  font-family: var(--ds-font-heading);
+  font-weight: var(--ds-weight-semibold);
+  letter-spacing: var(--ds-heading-tracking);
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+
+.ds-h1,
+.ds-h1[data-ui="typography"][data-variant] {
+  font-size: var(--ds-h1-size);
+  line-height: var(--ds-h1-leading);
+}
+.ds-h2,
+.ds-h2[data-ui="typography"][data-variant] {
+  font-size: var(--ds-h2-size);
+  line-height: var(--ds-h2-leading);
+}
+.ds-h3,
+.ds-h3[data-ui="typography"][data-variant] {
+  font-size: var(--ds-h3-size);
+  line-height: var(--ds-h3-leading);
+}
+
+.ds-body,
+.ds-small,
+.ds-subtitle,
+[data-ui="typography"][data-variant="body"],
+[data-ui="typography"][data-variant="small"],
+[data-ui="typography"][data-variant="subtitle"] {
+  margin: 0;
+  color: var(--ds-text-primary);
+  font-family: var(--ds-font-body);
+  font-weight: var(--ds-weight-regular);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.ds-body,
+.ds-body[data-ui="typography"][data-variant] {
+  font-size: var(--ds-text-base);
+  line-height: var(--ds-body-leading);
+}
+.ds-small,
+.ds-small[data-ui="typography"][data-variant] {
+  font-size: var(--ds-text-sm);
+  line-height: var(--ds-small-leading);
+}
+.ds-subtitle,
+.ds-subtitle[data-ui="typography"][data-variant] {
+  font-size: var(--ds-text-lg);
+  line-height: var(--ds-body-leading);
+}
+
+.ds-label,
+.ds-label[data-ui="typography"][data-variant] {
+  margin: 0;
+  color: var(--ds-text-secondary);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  line-height: var(--ds-small-leading);
+  letter-spacing: var(--ds-label-tracking);
+  text-transform: uppercase;
+}
+
+.ds-text-muted,
+[data-ui="typography"][data-variant][data-tone="muted"] {
+  color: var(--ds-text-secondary);
+}
+
+.ds-card,
+.ds-card[data-ui="card"] {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--ds-card-padding);
+  background: var(--ds-surface-card);
+  color: var(--ds-text-primary);
+  border: var(--ds-border-width) var(--ds-border-style) var(--ds-border-subtle);
+  border-radius: var(--ds-radius-card);
+  box-shadow: var(--ds-shadow-card);
+}
+
+.ds-card[data-density="compact"] {
+  padding: var(--ds-card-padding-compact);
+}
+.ds-section[data-spacing="compact"] {
+  padding-block: var(--ds-container-gutter);
+}
+
+/*
+ * Components add data attributes to outrank broad legacy panel/element rules.
+ * Keep all component styling here so tokens and standalone classes stay aligned.
+ * These selectors deliberately avoid !important; caller inline styles still work.
+ */
+.ds-button,
+.ds-button:where([data-variant][data-size]) {
+  --ds-button-bg: var(--ds-surface-inset);
+  --ds-button-hover-bg: var(--ds-surface-hover);
+  --ds-button-active-bg: var(--ds-surface-active);
+  --ds-button-text: var(--ds-text-primary);
+  --ds-button-border: var(--ds-border-strong);
+  box-sizing: border-box;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  min-height: var(--ds-control-height);
+  min-width: var(--ds-control-height);
+  max-width: 100%;
+  margin: 0;
+  padding: var(--ds-space-2) var(--ds-space-5);
+  background: var(--ds-button-bg);
+  color: var(--ds-button-text);
+  border: var(--ds-border-width) var(--ds-border-style) var(--ds-button-border);
+  border-radius: var(--ds-radius-control);
+  box-shadow: var(--ds-shadow-none);
+  font: var(--ds-weight-semibold) var(--ds-text-sm) / var(--ds-small-leading)
+    var(--ds-font-body);
+  letter-spacing: normal;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  opacity: 1;
+  transform: none;
+  transition:
+    background-color var(--ds-duration-fast) var(--ds-easing-standard),
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    color var(--ds-duration-fast) var(--ds-easing-standard),
+    transform var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.ds-button-primary,
+.ds-button:where([data-variant="primary"][data-size]) {
+  --ds-button-bg: var(--ds-action-bg);
+  --ds-button-hover-bg: var(--ds-action-hover);
+  --ds-button-active-bg: var(--ds-action-active);
+  --ds-button-text: var(--ds-action-text);
+  --ds-button-border: var(--ds-action-border);
+}
+
+.ds-button-secondary,
+.ds-button:where([data-variant="secondary"][data-size]) {
+  --ds-button-bg: var(--ds-surface-inset);
+  --ds-button-border: var(--ds-border-strong);
+}
+
+.ds-button-outline,
+.ds-button:where([data-variant="outline"][data-size]) {
+  --ds-button-bg: transparent;
+  --ds-button-border: var(--ds-action-border);
+}
+
+.ds-button-ghost,
+.ds-button:where([data-variant="ghost"][data-size]) {
+  --ds-button-bg: transparent;
+  --ds-button-border: transparent;
+}
+
+.ds-button[data-intent="danger"] {
+  --ds-button-bg: var(--ds-danger-bg);
+  --ds-button-hover-bg: var(--ds-danger-hover);
+  --ds-button-active-bg: var(--ds-danger-active);
+  --ds-button-text: var(--ds-danger-text);
+  --ds-button-border: var(--ds-danger-border);
+}
+
+.ds-button[data-intent="danger"][data-variant="ghost"] {
+  --ds-button-bg: transparent;
+  --ds-button-border: transparent;
+}
+.ds-button[data-intent="danger"][data-variant="outline"] {
+  --ds-button-bg: transparent;
+}
+
+.ds-button[aria-pressed="true"],
+.ds-button[aria-current="page"] {
+  --ds-button-bg: var(--ds-action-bg);
+  --ds-button-border: var(--ds-action-border);
+  --ds-button-text: var(--ds-action-text);
+  box-shadow: inset 0 -2px var(--ds-focus-color);
+}
+
+.ds-button-sm,
+.ds-button:where([data-variant][data-size="sm"]) {
+  min-height: var(--ds-control-height-sm);
+  min-width: var(--ds-control-height-sm);
+  padding: var(--ds-space-1) var(--ds-space-3);
+}
+
+.ds-button-lg,
+.ds-button:where([data-variant][data-size="lg"]) {
+  min-height: var(--ds-control-height-lg);
+  min-width: var(--ds-control-height-lg);
+  padding: var(--ds-space-3) var(--ds-space-6);
+  font-size: var(--ds-text-base);
+}
+
+.ds-button:hover:not(:disabled):not([aria-disabled="true"]),
+.ds-button:where([data-variant][data-size]):hover:not(:disabled):not(
+    [aria-disabled="true"]
+  ) {
+  background: var(--ds-button-hover-bg);
+  color: var(--ds-button-text);
+  border-color: var(--ds-button-border);
+}
+
+.ds-button:active:not(:disabled):not([aria-disabled="true"]),
+.ds-button:where([data-variant][data-size]):active:not(:disabled):not(
+    [aria-disabled="true"]
+  ) {
+  background: var(--ds-button-active-bg);
+  transform: translateY(var(--ds-control-press-offset));
+}
+
+.ds-button:focus-visible,
+.ds-button:where([data-variant][data-size]):focus-visible {
+  outline: var(--ds-focus-width) solid var(--ds-focus-color);
+  outline-offset: var(--ds-focus-offset);
+}
+
+/* Button normalizes aria-disabled to native disabled; raw links need a click guard. */
+.ds-button:disabled,
+.ds-button[aria-disabled="true"],
+.ds-button:where([data-variant][data-size]):disabled,
+.ds-button:where([data-variant][data-size])[aria-disabled="true"] {
+  background: var(--ds-button-bg);
+  color: var(--ds-button-text);
+  border-color: var(--ds-button-border);
+  cursor: not-allowed;
+  opacity: var(--ds-control-disabled-opacity);
+  transform: none;
+  box-shadow: var(--ds-shadow-none);
+}
+
+.ds-border {
+  border: var(--ds-border-width) var(--ds-border-style) var(--ds-border-subtle);
+}
+.ds-radius-control {
+  border-radius: var(--ds-radius-control);
+}
+.ds-radius-card {
+  border-radius: var(--ds-radius-card);
+}
+.ds-radius-pill {
+  border-radius: var(--ds-radius-pill);
+}
+.ds-shadow-none,
+.ds-card[data-ui="card"][data-shadow="none"] {
+  box-shadow: var(--ds-shadow-none);
+}
+.ds-shadow-card,
+.ds-card[data-ui="card"][data-shadow="card"] {
+  box-shadow: var(--ds-shadow-card);
+}
+.ds-shadow-raised,
+.ds-card[data-ui="card"][data-shadow="raised"] {
+  box-shadow: var(--ds-shadow-raised);
+}
+
+/* Common baseline: identical in the supervised application and public replay. */
+:root,
+[data-ds-theme] {
+  color-scheme: var(--ds-color-scheme);
+}
+:root {
+  font-family: var(--ds-font-body);
+  color: var(--ds-text-primary);
+  background: var(--ds-surface-page);
+  font-synthesis: none;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 0;
+  background: var(--ds-surface-page);
+  color: var(--ds-text-primary);
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+a {
+  color: var(--ds-text-link);
+}
+.leaflet-container .leaflet-popup-content a,
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--ds-text-link);
+}
+a:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: var(--ds-focus-width) solid var(--ds-focus-color);
+  outline-offset: var(--ds-focus-offset);
+}
+label {
+  color: var(--ds-text-secondary);
+  font: var(--ds-weight-semibold) var(--ds-text-sm) / var(--ds-small-leading)
+    var(--ds-font-body);
+  letter-spacing: normal;
+  text-transform: none;
+}
+/* Let wrapped labels share the row height while controls keep a common baseline. */
+:is(.two-col, .three-col, .decision-pair, .form-field-grid, .coordinate-fields, .import-filters, .population-edit-row, .fire-advisory) > label:not(:has(> input[type="checkbox"], > input[type="radio"])) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  margin: 0;
+  min-width: 0;
+}
+:is(.two-col, .three-col, .decision-pair, .form-field-grid, .coordinate-fields, .import-filters, .population-edit-row, .fire-advisory) > label > :is(input, select, textarea) {
+  margin-block: auto 0;
+}
+.fire-advisory {
+  align-items: stretch;
+}
+.fire-advisory > label {
+  flex: 1 1 12rem;
+  align-items: stretch;
+}
+.fire-advisory :is(input, select) {
+  max-width: 100%;
+}
+.controls input[type="range"] {
+  min-height: var(--ds-control-height);
+  margin-block: 0;
+}
+.population-edit-row {
+  display: grid;
+  row-gap: var(--ds-space-3);
+}
+.population-edit-row > .ds-button {
+  align-self: end;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--ds-control-height);
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-control);
+  background: var(--ds-surface-inset);
+  color: var(--ds-text-primary);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  font: var(--ds-text-base) / var(--ds-small-leading) var(--ds-font-body);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--ds-text-secondary);
+  opacity: 1;
+}
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--ds-focus-color);
+}
+input[type="checkbox"],
+input[type="radio"] {
+  flex-shrink: 0;
+}
+input[type="range"] {
+  min-width: 0;
+}
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: var(--ds-control-disabled-opacity);
+}
+fieldset {
+  min-width: 0;
+  border: var(--ds-border-width) solid var(--ds-border-subtle);
+  border-radius: var(--ds-radius-card);
+  padding: var(--ds-space-4);
+}
+legend,
+summary {
+  color: var(--ds-text-primary);
+  font: var(--ds-weight-semibold) var(--ds-text-sm) / var(--ds-small-leading)
+    var(--ds-font-body);
+}
+summary {
+  cursor: pointer;
+}
+.toggle input {
+  display: block;
+  position: absolute;
+  opacity: 0;
+  width: var(--ds-control-height-sm);
+  height: var(--ds-control-height-sm);
+  margin: 0;
+}
+.toggle input:focus-visible + span {
+  outline: var(--ds-focus-width) solid var(--ds-focus-color);
+  outline-offset: var(--ds-focus-offset);
+}
+
+/* Reusable layout treatments carry no independent palette, type or radii. */
+.ds-full {
+  width: 100%;
+}
+.ds-crew-action {
+  min-height: var(--ds-crew-control-height);
+}
+.ds-button.ds-list-action {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ds-space-2);
+  width: 100%;
+  text-align: left;
+}
+.ds-button.ds-row-action {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  width: 100%;
+  text-align: left;
+}
+.ds-button.ds-row-action > *,
+.ds-button.ds-list-action > * {
+  min-width: 0;
+}
+.ds-button.ds-heading-action {
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  justify-content: flex-start;
+  padding-inline: 0;
+}
+.ds-card > [data-ui="typography"] + *,
+.ds-card > details + *,
+.ds-card > .ds-button + * {
+  margin-block-start: var(--ds-space-3);
+}
+.ds-card > [data-ui="typography"]:last-child {
+  margin-block-end: 0;
+}
+.ds-card > header {
+  margin-block-end: var(--ds-space-4);
+  padding-block-end: var(--ds-space-4);
+  border-color: var(--ds-border-subtle);
+}
+.ds-card:is(.chosen, .selected),
+.ds-card.wizard-fire.selected {
+  border-color: var(--ds-focus-color);
+  box-shadow: inset 0 0 0 1px var(--ds-focus-color);
+}
+.ds-card:is(.route-problem, .replan-alert, .brief-ack-pending),
+.ds-card.route-card.unknown,
+.ds-card.decision-advisory:is(.unknown, .advisory) {
+  background: var(--ds-warning-bg);
+  color: var(--ds-warning-text);
+}
+.ds-card.route-card.unavailable,
+.ds-card.decision-advisory.infeasible,
+.ds-card.delete-confirmation {
+  background: var(--ds-danger-bg);
+  color: var(--ds-danger-text);
+}
+[data-ui="typography"]:is(
+  .failure,
+  .inline-error,
+  .management-error,
+  .unsent,
+  .manager-error,
+  .decision-error
+) {
+  color: var(--ds-danger-text);
+}
+[data-ui="typography"]:is(.engine-warning, .operation-notice, .brief-warning) {
+  color: var(--ds-warning-text);
+}
+.ds-card .ds-label,
+.ds-card .ds-small {
+  overflow-wrap: anywhere;
+}
+
+/* Page composition: responsive gutters always come from the shared contract. */
+.ds-section {
+  min-width: 0;
+  width: 100%;
+}
+.ds-section > .ds-container {
+  min-width: 0;
+}
+.login-page > .ds-container,
+.crew-shell > .ds-container,
+.brief-page > .ds-container {
+  max-width: var(--ds-container-narrow);
+}
+.login-page form {
+  width: 100%;
+}
+.management-header,
+.section-heading,
+.header-actions,
+.form-actions,
+.manager-actions,
+.point-actions,
+.wizard-actions,
+.advisory-actions {
+  gap: var(--ds-space-3);
+  flex-wrap: wrap;
+}
+.management-header > *,
+.section-heading > *,
+.overview-grid > *,
+.updates-grid > *,
+.exercise-grid-three > *,
+.two-col > *,
+.three-col > * {
+  min-width: 0;
+}
+.management-header,
+.section-heading {
+  margin-block-end: var(--ds-space-4);
+}
+.scenario-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+}
+.scenario-card-topline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2) var(--ds-space-3);
+  min-width: 0;
+}
+.scenario-card-topline .scenario-index {
+  position: static;
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+.scenario-card h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.scenario-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--ds-space-6);
+  background: transparent;
+  border: 0;
+}
+.scenario-index,
+.setup-badge,
+.status-pill,
+.save-state,
+.run-state,
+.list-toolbar > span,
+.card-metadata span {
+  font: var(--ds-weight-semibold) var(--ds-text-xs) / var(--ds-small-leading)
+    var(--ds-font-mono);
+  letter-spacing: var(--ds-label-tracking);
+}
+.scenario-index,
+.card-metadata span {
+  color: var(--ds-text-secondary);
+}
+.setup-badge {
+  align-self: flex-start;
+  width: fit-content;
+}
+.scenario-card .scenario-open {
+  align-self: flex-start;
+}
+.scenario-card .card-metadata {
+  margin: auto 0 0;
+}
+.scenario-card > .exercise-metric-strip {
+  margin-block-start: auto;
+}
+.list-toolbar > span {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.scenario-card .ds-button[data-intent="danger"] {
+  align-self: flex-start;
+}
+.scenario-card .confirm-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-3);
+}
+.decision-setup.ds-card {
+  max-width: var(--ds-container-max);
+  margin: var(--ds-space-6) auto;
+}
+.decision-shell,
+.mobility-shell,
+.app-frame,
+.experiment-setup-page {
+  background: var(--ds-surface-page);
+  color: var(--ds-text-primary);
+}
+.decision-header,
+.mobility-header,
+.app-header,
+.setup-topbar {
+  padding-inline: var(--ds-container-gutter);
+  gap: var(--ds-space-4);
+  background: var(--ds-surface-card);
+  color: var(--ds-text-primary);
+}
+.decision-header > div,
+.decision-header nav,
+.mobility-header > div,
+.mobility-header nav {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.decision-header > div span {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.decision-header .decision-back {
+  flex: 0 0 auto;
+  color: var(--ds-text-primary);
+}
+.decision-header .decision-tools-toggle {
+  list-style: none;
+  cursor: pointer;
+}
+.decision-header .decision-tools-toggle::-webkit-details-marker {
+  display: none;
+}
+.decision-header .decision-tools-toggle::after {
+  content: "▾";
+  transition: transform var(--ds-duration-fast) var(--ds-easing-standard);
+}
+.decision-header details[open] .decision-tools-toggle::after {
+  transform: rotate(180deg);
+}
+.decision-header .decision-tools-menu {
+  position: absolute;
+  top: calc(100% + var(--ds-space-2));
+  right: 0;
+  z-index: 1100;
+  display: grid;
+  gap: var(--ds-space-1);
+  min-width: min(19rem, calc(100vw - 2rem));
+  padding: var(--ds-space-2);
+  background: var(--ds-surface-card);
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-card);
+  box-shadow: var(--ds-shadow-raised);
+}
+.decision-header .decision-tools-menu .ds-button {
+  justify-content: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+.scenario-loading {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--ds-space-4);
+  background: var(--ds-surface-page);
+  color: var(--ds-text-primary);
+}
+.scenario-loading-card {
+  display: grid;
+  justify-items: center;
+  gap: var(--ds-space-3);
+  width: min(100%, 27rem);
+  text-align: center;
+}
+.scenario-loading-card h1,
+.scenario-loading-card p {
+  margin: 0;
+}
+.loading-illustration {
+  width: 11.25rem;
+  height: auto;
+  overflow: visible;
+}
+.loading-ground {
+  fill: none;
+  stroke: var(--ds-border-strong);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.loading-tree {
+  fill: none;
+  stroke: var(--ds-success-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.loading-flame {
+  fill: #e9784f;
+  transform-origin: 90px 84px;
+  animation: loading-fire 1.3s ease-in-out infinite alternate;
+}
+.loading-water {
+  fill: none;
+  stroke: #91cadd;
+  stroke-width: 4;
+  stroke-dasharray: 5 7;
+  stroke-linecap: round;
+  animation: loading-water 0.8s linear infinite;
+}
+.loading-nozzle {
+  fill: var(--ds-text-secondary);
+}
+@keyframes loading-fire {
+  to { transform: scale(0.9) rotate(3deg); opacity: 0.75; }
+}
+@keyframes loading-water {
+  to { stroke-dashoffset: -24; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading-flame,
+  .loading-water,
+  .decision-header .decision-tools-toggle::after {
+    animation: none;
+    transition: none;
+  }
+}
+.decision-perspectives,
+.access-summary,
+.exercise-story {
+  padding-inline: var(--ds-container-gutter);
+}
+.decision-layout,
+.public-layout {
+  min-width: 0;
+  height: auto;
+}
+.decision-layout > *,
+.public-layout > *,
+.decision-pair > * {
+  min-width: 0;
+}
+.decision-input,
+.decision-output {
+  border-radius: var(--ds-radius-card);
+}
+.decision-variants {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.decision-timeline {
+  flex-wrap: wrap;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-4) var(--ds-container-gutter);
+}
+.decision-timeline input {
+  min-width: 0;
+  flex: 1 1 8rem;
+  width: 100%;
+}
+.decision-map-caption,
+.decision-events {
+  padding-inline: var(--ds-container-gutter);
+  font-size: var(--ds-text-sm);
+  line-height: var(--ds-small-leading);
+}
+.decision-metrics {
+  font-size: var(--ds-text-sm);
+  gap: var(--ds-space-3);
+}
+.decision-assumptions,
+.decision-note,
+.decision-margin,
+.decision-reason,
+.decision-conflict,
+.decision-status {
+  font-size: var(--ds-text-sm);
+  line-height: var(--ds-small-leading);
+}
+.decision-card-title {
+  justify-content: flex-start;
+  text-align: left;
+}
+.decision-header nav {
+  flex: 0 0 auto;
+}
+.decision-header > div {
+  flex: 1 1 24rem;
+}
+.app-header nav {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.decision-provenance {
+  font-size: var(--ds-text-sm);
+}
+.public-layout {
+  max-width: none;
+  margin-inline: var(--ds-container-gutter);
+}
+.public-controls {
+  gap: var(--ds-space-4);
+}
+.public-controls label {
+  min-width: 0;
+}
+.public-choice {
+  gap: var(--ds-space-2);
+}
+.public-scenario-story {
+  border-left-color: var(--ds-action-border);
+}
+.controls {
+  padding: var(--ds-card-padding-compact);
+}
+.workspace-page,
+.experiment-setup-page {
+  padding-inline: var(--ds-container-gutter);
+  gap: var(--ds-space-4);
+}
+.timeline {
+  flex-wrap: wrap;
+  gap: var(--ds-space-3);
+}
+.timeline-track {
+  min-width: 0;
+  flex: 1 1 8rem;
+}
+.timeline .forecast-control {
+  flex-wrap: wrap;
+}
+.panel-close {
+  position: absolute;
+  right: var(--ds-space-2);
+  top: var(--ds-space-2);
+  width: var(--ds-control-height);
+  height: var(--ds-control-height);
+  padding: 0;
+}
+.mobility-panel,
+.inventory-drawer {
+  position: relative;
+}
+.mobility-panel > h2,
+.inventory-drawer > h2 {
+  padding-inline-end: var(--ds-space-12);
+}
+.inventory-item,
+.selected-road {
+  flex-wrap: wrap;
+}
+.status-columns {
+  min-width: 0;
+  max-width: 100%;
+}
+.status-columns > section {
+  min-width: 0;
+}
+.crew-brief {
+  margin: 0;
+}
+.crew-secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.modal-backdrop,
+.wizard-backdrop {
+  padding: var(--ds-container-gutter);
+}
+.ds-dialog {
+  border: 0;
+  margin: 0;
+  padding: var(--ds-container-gutter);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  color: var(--ds-text-primary);
+}
+.ds-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+.ds-dialog::backdrop {
+  background: rgb(4 10 16 / 72%);
+}
+.ds-dialog.drawer-backdrop {
+  padding: 0;
+  justify-items: end;
+}
+.ds-dialog .inventory-drawer {
+  height: 100%;
+  max-height: 100dvh;
+}
+.metadata-modal,
+.scenario-wizard,
+.fogos-import-modal {
+  max-width: 100%;
+  max-height: calc(100dvh - 2 * var(--ds-container-gutter));
+}
+.wizard-controls,
+.import-preview-form {
+  min-width: 0;
+}
+.forecast-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+  padding: 0;
+  border: 0;
+}
+.forecast-options .ds-button {
+  min-width: var(--ds-control-height);
+}
+
+@media (max-width: 48rem) {
+  .workspace-page {
+    height: auto;
+  }
+  .workspace-page .control-column,
+  .workspace-page .controls {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  .overview-grid,
+  .updates-grid,
+  .exercise-grid-three,
+  .exercise-two-column,
+  .decision-pair,
+  .population-edit-row,
+  .two-col,
+  .three-col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .decision-header,
+  .mobility-header,
+  .board-toolbar {
+    flex-wrap: wrap;
+  }
+  .decision-header > div,
+  .decision-header nav {
+    width: 100%;
+  }
+  .decision-header nav .ds-button {
+    flex: 1 1 0;
+  }
+  .access-summary {
+    flex-direction: column;
+  }
+  .decision-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .decision-layout,
+  .public-layout {
+    display: block;
+  }
+  .decision-map {
+    height: 27rem;
+  }
+  .decision-input,
+  .decision-output {
+    overflow: visible;
+  }
+  .public-layout .decision-map-panel {
+    position: relative;
+    height: auto;
+  }
+  .public-layout .decision-map {
+    flex: none;
+    height: 27rem;
+  }
+  .public-layout .decision-output {
+    max-height: none;
+  }
+  .mobility-head-actions .connection {
+    display: inline;
+  }
+  .mobility-map-layout {
+    height: auto;
+  }
+  .mobility-map {
+    min-height: 32rem;
+  }
+  .mobility-context {
+    max-height: none;
+  }
+  .mobility-context {
+    position: relative;
+    width: 100%;
+  }
+  .map-actions {
+    left: var(--ds-space-4);
+    right: var(--ds-space-4);
+    flex-wrap: wrap;
+  }
+  .scenario-wizard > header {
+    flex-wrap: wrap;
+    gap: var(--ds-space-3);
+  }
+  .wizard-grid,
+  .import-preview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wizard-map,
+  .import-map {
+    min-width: 0;
+  }
+  .crew-secondary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media print {
+  .brief-page.ds-section,
+  .brief-page > .ds-container,
+  .print-brief.ds-card {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    box-shadow: none;
+    border: 0;
+    background: white;
+    color: black;
+  }
+  .print-brief .ds-button {
+    display: none;
+  }
+  .print-brief [data-ui="typography"],
+  .print-brief footer,
+  .print-brief .brief-warning {
+    color: black;
+  }
+  .print-brief .brief-warning {
+    background: transparent;
+    border-color: currentColor;
+  }
+}
+
+@media (min-width: 72rem) {
+  .decision-shell:has(> .decision-layout) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  .decision-shell > .decision-layout {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .decision-layout > .decision-input,
+  .decision-layout > .decision-output {
+    overflow-y: auto;
+  }
+  .decision-layout .decision-map {
+    min-height: 14rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-button,
+  .ds-button:where([data-variant][data-size]) {
+    transition: none;
+  }
+  .ds-button:active:not(:disabled):not([aria-disabled="true"]),
+  .ds-button:where([data-variant][data-size]):active:not(:disabled):not(
+      [aria-disabled="true"]
+    ) {
+    transform: none;
+  }
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --ds-container-gutter: var(--ds-space-8);
+    --ds-section-padding: var(--ds-space-24);
+    --ds-card-padding: var(--ds-space-8);
+    --ds-h1-size: var(--ds-text-4xl);
+    --ds-h2-size: var(--ds-text-3xl);
+    --ds-h3-size: var(--ds-text-xl);
+  }
+}
+
+/* Keep the viewer header and map controls in normal layout flow. */
+.simulation-frame {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+}
+.simulation-frame .app-header {
+  align-items: start;
+  flex: 0 0 auto;
+  min-height: 96px;
+  padding-block: var(--ds-space-3);
+  row-gap: var(--ds-space-2);
+}
+.simulation-frame .workspace-page {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+.map-bottom {
+  bottom: var(--ds-space-4);
+  display: grid;
+  gap: var(--ds-space-2);
+  left: var(--ds-space-4);
+  pointer-events: none;
+  position: absolute;
+  right: var(--ds-space-4);
+  z-index: 800;
+}
+.map-bottom > * {
+  pointer-events: auto;
+}
+.map-bottom > .result-warnings {
+  justify-self: end;
+  max-height: min(30vh, 12rem);
+  max-width: 100%;
+  overflow-y: auto;
+  position: static;
+  width: min(310px, 100%);
+}
+.map-bottom > .timeline {
+  display: grid;
+  flex-wrap: nowrap;
+  grid-template-columns: auto auto minmax(8rem, 1fr) auto auto;
+  min-height: 0;
+  position: static;
+  width: 100%;
+}
+.map-bottom .forecast-options {
+  align-self: center;
+  display: grid;
+  gap: var(--ds-space-1);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+  position: static;
+}
+.forecast-label {
+  color: var(--ds-text-secondary);
+  font: 700 var(--ds-text-xs) / var(--ds-small-leading) var(--ds-font-mono);
+  grid-column: 1 / -1;
+  letter-spacing: var(--ds-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.map-bottom .forecast-options .ds-button {
+  min-width: 0;
+  padding-inline: var(--ds-space-2);
+}
+@media (max-width: 1000px) {
+  .simulation-frame .legend {
+    top: 56px;
+  }
+  .map-bottom > .timeline {
+    grid-template-columns: auto auto minmax(0, 1fr);
+  }
+  .map-bottom .forecast-options {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+  .map-bottom .horizon {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .simulation-frame {
+    height: auto;
+    min-height: 100dvh;
+  }
+  .simulation-frame .workspace-selectors label {
+    flex: 1 0 100%;
+  }
+  .simulation-frame .workspace-selectors select {
+    max-width: none;
+    width: 100%;
+  }
+  .simulation-frame .app-header nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    height: auto;
+    width: 100%;
+  }
+  .simulation-frame .app-header nav a {
+    justify-content: center;
+    min-width: 0;
+    padding-inline: var(--ds-space-1);
+    text-align: center;
+  }
+  .simulation-frame .app-header nav a span {
+    justify-items: center;
+  }
+  .simulation-frame .workspace-page {
+    flex: none;
+  }
+}
+
+/* Compatibility aliases for retained layout/domain rules; defined only here. */
+:root,
+[data-ds-theme] {
+  --border-panel: var(--ds-border-strong);
+  --danger-bg: var(--ds-danger-bg);
+  --danger-text: var(--ds-danger-text);
+  --decision: #9b8bc4;
+  --display: var(--ds-font-heading);
+  --forecast: #ffb547;
+  --ink-600: #78909f;
+  --ink-700: #2b3d4a;
+  --ink-900: #14202b;
+  --ink-950: #0f1822;
+  --line: var(--ds-border-subtle);
+  --mono: var(--ds-font-mono);
+  --radius-control: var(--ds-radius-control);
+  --radius-panel: var(--ds-radius-card);
+  --route: #4bb799;
+  --signal: #ff6848;
+  --signal-dark: #f0523a;
+  --success-text: var(--ds-success-text);
+  --surface-inset: var(--ds-surface-inset);
+  --surface-page: var(--ds-surface-page);
+  --surface-panel: var(--ds-surface-card);
+  --surface-selected: var(--ds-surface-active);
+  --text-link: var(--ds-text-link);
+  --text-primary: var(--ds-text-primary);
+  --text-secondary: var(--ds-text-secondary);
+  --warning-bg: var(--ds-warning-bg);
+  --warning-text: var(--ds-warning-text);
+}

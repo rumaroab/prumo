@@ -1,0 +1,42 @@
+{
+  "id": "exercise-demo-v1",
+  "synthetic": true,
+  "name": "Exercício fictício de coordenação na encosta",
+  "description": "Cenário offline para demonstrar missões, afetação de meios, abastecimento de água, comparação e ensaio.",
+  "reference_time": "2026-08-18T13:00:00+00:00",
+  "points": [
+    {"id": "demo-command", "kind": "response_base", "name": "Posto de comando · exercício", "coordinates": [-8.2894, 41.4258]},
+    {"id": "demo-reservoir", "kind": "water_point", "name": "Reservatório de capacidade limitada", "coordinates": [-8.2784, 41.4327], "water": {"source_type": "reservoir", "availability": "available", "supply_class": "finite", "available_volume_l": 45000, "shared_flow_l_min": 900, "filling_positions": 1, "setup_time_min": 2, "verification_status": "verified"}},
+    {"id": "demo-hydrant", "kind": "water_point", "name": "Hidrante de abastecimento contínuo", "coordinates": [-8.3002, 41.4208], "water": {"source_type": "hydrant", "availability": "available", "supply_class": "continuous", "available_volume_l": null, "shared_flow_l_min": 1400, "filling_positions": 2, "setup_time_min": 1, "verification_status": "reported"}},
+    {"id": "demo-sector", "kind": "delivery_point", "name": "Entrega no setor Alfa", "coordinates": [-8.2668, 41.4370]},
+    {"id": "demo-control", "kind": "access_control", "name": "Controlo do acesso a leste", "coordinates": [-8.2760, 41.4218]},
+    {"id": "demo-shelter", "kind": "shelter", "name": "Centro de acolhimento · exercício", "coordinates": [-8.3060, 41.4290]},
+    {"id": "demo-staging", "kind": "staging_area", "name": "Ponto de concentração dos bombeiros", "coordinates": [-8.2745, 41.4330]}
+  ],
+  "vehicles": [
+    {"id": "demo-police-car", "name": "Viatura de patrulha", "vehicle_class": "light", "passenger_capacity": 4},
+    {"id": "demo-tanker-1", "name": "Autotanque 1", "vehicle_class": "tanker", "water_tank_capacity_l": 5000, "pump_flow_l_min": 600, "starting_water_l": 5000},
+    {"id": "demo-tanker-2", "name": "Autotanque 2", "vehicle_class": "tanker", "water_tank_capacity_l": 8000, "pump_flow_l_min": 700, "starting_water_l": 2000},
+    {"id": "demo-bus", "name": "Autocarro da proteção civil", "vehicle_class": "bus", "passenger_capacity": 28}
+  ],
+  "units": [
+    {"id": "demo-police", "organisation": "GNR", "callsign": "GNR-01", "vehicle_id": "demo-police-car", "capabilities": ["access_control"]},
+    {"id": "demo-fire-1", "organisation": "Bombeiros", "callsign": "BOM-01", "vehicle_id": "demo-tanker-1", "capabilities": ["firefighting", "water_supply"], "containment_rate_m_min": 6},
+    {"id": "demo-fire-2", "organisation": "Bombeiros", "callsign": "BOM-02", "vehicle_id": "demo-tanker-2", "capabilities": ["firefighting", "water_supply"], "containment_rate_m_min": 5},
+    {"id": "demo-civil", "organisation": "Proteção Civil", "callsign": "PC-01", "vehicle_id": "demo-bus", "capabilities": ["transport", "logistics"]}
+  ],
+  "missions": [
+    {"id": "demo-mission-control", "name": "Controlar o acesso a leste", "mission_type": "access_control", "priority": 5, "location_point_id": "demo-control", "deadline_min": 25, "service_duration_min": 90, "required_capabilities": ["access_control"]},
+    {"id": "demo-mission-fire", "name": "Intervir no setor Alfa", "mission_type": "fire_response", "priority": 5, "location_point_id": "demo-sector", "access_point_id": "demo-staging", "deadline_min": 35, "service_duration_min": 40, "required_capabilities": ["firefighting"]},
+    {"id": "demo-mission-water", "name": "Abastecer o setor Alfa", "mission_type": "water_supply", "priority": 4, "location_point_id": "demo-sector", "target_volume_l": 30000, "deadline_min": 110, "required_capabilities": ["water_supply"], "required_unit_count": 2},
+    {"id": "demo-mission-transport", "name": "Transportar residentes para o centro de acolhimento", "mission_type": "transport", "priority": 4, "location_point_id": "demo-shelter", "people_count": 42, "required_capabilities": ["transport"], "deadline_min": 100}
+  ],
+  "plans": [
+    {"id": "demo-plan-near", "name": "Resposta com prioridade ao reservatório", "water_source_id": "demo-reservoir"},
+    {"id": "demo-plan-flow", "name": "Resposta com abastecimento contínuo pelo hidrante", "water_source_id": "demo-hydrant"}
+  ],
+  "road_constraints": [
+    {"road_name": "Estrada florestal a leste", "kind": "restricted", "status": "pending", "affected_vehicle_classes": ["heavy", "tanker"]},
+    {"road_name": "Acesso a norte", "kind": "blocked", "status": "confirmed", "affected_vehicle_classes": []}
+  ]
+}

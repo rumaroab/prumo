@@ -1,0 +1,80 @@
+{
+  "id": "mobility-demo-v1",
+  "version": 2,
+  "title": "Demonstração de mobilidade",
+  "duration_seconds": 480,
+  "center": [-8.2800, 41.4270],
+  "fogos_resource_demo": {
+    "imported": {"operacionais": 24, "meios_terrestres": 8, "meios_aereos": 1},
+    "synchronized": {"operacionais": 31, "meios_terrestres": 11, "meios_aereos": 2},
+    "planned_operacionais": 18
+  },
+  "nodes": [
+    {"id": "base", "coordinates": [-8.2910, 41.4250]},
+    {"id": "west", "coordinates": [-8.2850, 41.4270]},
+    {"id": "north", "coordinates": [-8.2800, 41.4320]},
+    {"id": "ridge", "coordinates": [-8.2740, 41.4330]},
+    {"id": "south", "coordinates": [-8.2810, 41.4210]},
+    {"id": "valley", "coordinates": [-8.2720, 41.4250]},
+    {"id": "station", "coordinates": [-8.2890, 41.4340]},
+    {"id": "outer", "coordinates": [-8.2670, 41.4190]},
+    {"id": "crossing", "coordinates": [-8.2780, 41.4260]}
+  ],
+  "roads": [
+    {"id": "base-road", "name": "Avenida da Base", "from": "base", "to": "west", "speed_kmh": 35, "maxweight": 30},
+    {"id": "north-access", "name": "Acesso Norte", "from": "west", "to": "north", "speed_kmh": 40, "maxweight": 30},
+    {"id": "ridge-road", "name": "Estrada da Serra", "from": "north", "to": "ridge", "speed_kmh": 35, "maxweight": 30},
+    {"id": "south-bypass", "name": "Desvio Sul", "from": "west", "to": "south", "speed_kmh": 35, "maxweight": 30},
+    {"id": "south-climb", "name": "Subida Sul", "from": "south", "to": "ridge", "speed_kmh": 30, "maxweight": 30},
+    {"id": "station-road", "name": "Estrada do Quartel", "from": "station", "to": "west", "speed_kmh": 40, "maxweight": 30},
+    {"id": "central-connector", "name": "Ligação Central", "from": "west", "to": "crossing", "speed_kmh": 40, "maxweight": 30},
+    {"id": "ribeira-bridge", "name": "Ponte da Ribeira", "from": "crossing", "to": "valley", "speed_kmh": 35, "maxweight": 7.5},
+    {"id": "outer-road", "name": "Circular Exterior", "from": "south", "to": "outer", "speed_kmh": 45, "maxweight": 30},
+    {"id": "valley-road", "name": "Estrada do Vale", "from": "outer", "to": "valley", "speed_kmh": 45, "maxweight": 30}
+  ],
+  "destinations": {
+    "ridge_command": {"name": "Posto de comando da serra", "coordinates": [-8.2740, 41.4330]},
+    "valley_support": {"name": "Centro de apoio do vale", "coordinates": [-8.2720, 41.4250]}
+  },
+  "vehicles": [
+    {"alias": "fire_vehicle", "id": "demo-fire-v1", "name": "VLCI 01", "vehicle_class": "light", "width_m": 2.2, "height_m": 2.8, "weight_t": 6.0, "off_road": true},
+    {"alias": "police_vehicle", "id": "demo-police-v1", "name": "Patrulha 01", "vehicle_class": "light", "width_m": 1.9, "height_m": 1.8, "weight_t": 2.2, "off_road": false},
+    {"alias": "civil_vehicle", "id": "demo-civil-v1", "name": "Comando 02", "vehicle_class": "light", "width_m": 2.1, "height_m": 2.5, "weight_t": 4.5, "off_road": true},
+    {"alias": "social_vehicle", "id": "demo-social-v1", "name": "Apoio 01", "vehicle_class": "ambulance", "width_m": 2.1, "height_m": 2.7, "weight_t": 4.0, "off_road": false},
+    {"alias": "transport_vehicle", "id": "demo-transport-v1", "name": "Autocarro 01", "vehicle_class": "bus", "width_m": 2.5, "height_m": 3.3, "weight_t": 16.0, "off_road": false}
+  ],
+  "units": [
+    {"alias": "fire", "id": "demo-fire-01", "organisation": "Bombeiros", "callsign": "Bombeiros 01", "contact": "Canal DEMO 1", "vehicle": "fire_vehicle", "location": [-8.2910, 41.4250]},
+    {"alias": "police", "id": "demo-police-01", "organisation": "Polícia", "callsign": "Polícia 01", "contact": "Canal DEMO 1", "vehicle": "police_vehicle", "location": [-8.2800, 41.4320]},
+    {"alias": "civil", "id": "demo-civil-01", "organisation": "Proteção Civil", "callsign": "Proteção Civil 01", "contact": "Canal DEMO 1", "vehicle": "civil_vehicle", "location": [-8.2810, 41.4210]},
+    {"alias": "social", "id": "demo-social-01", "organisation": "Apoio Social", "callsign": "Apoio Social 01", "contact": "Canal DEMO 2", "vehicle": "social_vehicle", "location": [-8.2890, 41.4340]},
+    {"alias": "transport", "id": "demo-transport-01", "organisation": "Transporte", "callsign": "Transporte 01", "contact": "Canal DEMO 2", "vehicle": "transport_vehicle", "location": [-8.2850, 41.4270]}
+  ],
+  "events": [
+    {"id": "e001-ready", "at_seconds": 0, "type": "communication", "unit": "police", "source": "radio", "message_pt": "Polícia 01 para coordenação: posição confirmada no acesso norte.", "message_en": "Police 01 to coordination: position confirmed at the northern access.", "result_state": "received"},
+    {"id": "e002-assign-fire", "at_seconds": 15, "type": "assign", "unit": "fire", "movement": "fire_movement", "destination": "ridge_command", "purpose": "Reconhecimento e proteção do posto de comando", "message_pt": "Coordenação para Bombeiros 01: deslocação atribuída ao posto de comando da serra.", "message_en": "Coordination to Fire 01: movement assigned to the ridge command post.", "result_state": "assigned"},
+    {"id": "e003-assign-social", "at_seconds": 30, "type": "assign", "unit": "social", "movement": "social_movement", "destination": "valley_support", "purpose": "Apoio a civis no centro do vale", "message_pt": "Coordenação para Apoio Social 01: deslocação atribuída ao centro de apoio do vale.", "message_en": "Coordination to Social Support 01: movement assigned to the valley support centre.", "result_state": "assigned"},
+    {"id": "e004-accept-fire", "at_seconds": 45, "type": "movement_action", "movement": "fire_movement", "unit": "fire", "action": "accept", "source": "crew", "message_pt": "Bombeiros 01: briefing recebido e aceite.", "message_en": "Fire 01: brief received and accepted.", "result_state": "accepted"},
+    {"id": "e005-depart-fire", "at_seconds": 60, "type": "movement_action", "movement": "fire_movement", "unit": "fire", "action": "depart", "source": "crew", "message_pt": "Bombeiros 01: saída da base confirmada.", "message_en": "Fire 01: departure from base confirmed.", "result_state": "travelling"},
+    {"id": "e006-accept-social", "at_seconds": 75, "type": "movement_action", "movement": "social_movement", "unit": "social", "action": "accept", "source": "crew", "message_pt": "Apoio Social 01: missão aceite.", "message_en": "Social Support 01: assignment accepted.", "result_state": "accepted"},
+    {"id": "e007-depart-social", "at_seconds": 90, "type": "movement_action", "movement": "social_movement", "unit": "social", "action": "depart", "source": "crew", "message_pt": "Apoio Social 01: em deslocação para o centro do vale.", "message_en": "Social Support 01: travelling to the valley centre.", "result_state": "travelling"},
+    {"id": "e008-location-fire", "at_seconds": 105, "type": "location", "unit": "fire", "coordinates": [-8.2865, 41.4265], "source": "phone", "message_pt": "Bombeiros 01: posição partilhada à saída da base.", "message_en": "Fire 01: location shared after leaving base.", "result_state": "location received"},
+    {"id": "e009-blockage", "at_seconds": 120, "type": "road_report", "unit": "police", "report": "north_blockage", "segment_id": "north-access", "kind": "blocked", "direction": "both", "reason": "Árvore caída e fumo intenso", "message_pt": "Polícia 01 para coordenação: árvore caída no acesso norte. Passagem bloqueada nos dois sentidos.", "message_en": "Police 01 to coordination: fallen tree on the northern access. Road blocked in both directions.", "result_state": "pending review"},
+    {"id": "e010-confirm-blockage", "at_seconds": 150, "type": "review_report", "unit": "civil", "report": "north_blockage", "status": "confirmed", "message_pt": "Proteção Civil 01: bloqueio do acesso norte confirmado no terreno.", "message_en": "Civil Protection 01: northern access blockage confirmed in the field.", "result_state": "confirmed"},
+    {"id": "e011-reroute-fire", "at_seconds": 180, "type": "revise_route", "unit": "fire", "movement": "fire_movement", "message_pt": "Coordenação para Bombeiros 01: novo percurso emitido pelo desvio sul. Confirmem receção.", "message_en": "Coordination to Fire 01: new route issued via the southern bypass. Confirm receipt.", "result_state": "acknowledgment required"},
+    {"id": "e012-ack-route", "at_seconds": 195, "type": "movement_action", "movement": "fire_movement", "unit": "fire", "action": "acknowledge_brief", "source": "crew", "message_pt": "Bombeiros 01: versão atualizada recebida; seguimos pelo desvio sul.", "message_en": "Fire 01: updated version received; proceeding via the southern bypass.", "result_state": "acknowledged"},
+    {"id": "e013-assign-transport", "at_seconds": 225, "type": "assign", "unit": "transport", "movement": "transport_movement", "destination": "valley_support", "purpose": "Transporte de civis para o centro de apoio", "forbidden_segments": ["ribeira-bridge"], "message_pt": "Coordenação para Transporte 01: percurso atribuído pela circular exterior; a ponte não suporta a viatura.", "message_en": "Coordination to Transport 01: route assigned via the outer ring; the bridge does not support the vehicle.", "result_state": "assigned"},
+    {"id": "e014-accept-transport", "at_seconds": 240, "type": "movement_action", "movement": "transport_movement", "unit": "transport", "action": "accept", "source": "crew", "message_pt": "Transporte 01: percurso e limitação de peso compreendidos.", "message_en": "Transport 01: route and weight restriction understood.", "result_state": "accepted"},
+    {"id": "e015-depart-transport", "at_seconds": 255, "type": "movement_action", "movement": "transport_movement", "unit": "transport", "action": "depart", "source": "crew", "message_pt": "Transporte 01: partida confirmada pela circular exterior.", "message_en": "Transport 01: departure confirmed via the outer ring.", "result_state": "travelling"},
+    {"id": "e016-social-offline", "at_seconds": 285, "type": "communication", "unit": "social", "movement": "social_movement", "source": "radio", "message_pt": "Apoio Social 01: sem dados móveis. Próximas atualizações seguem por rádio.", "message_en": "Social Support 01: mobile data unavailable. Further updates will be sent by radio.", "result_state": "radio fallback"},
+    {"id": "e017-social-radio-location", "at_seconds": 315, "type": "location", "unit": "social", "movement": "social_movement", "coordinates": [-8.2780, 41.4260], "source": "radio", "message_pt": "Apoio Social 01 por rádio: a passar a ligação central.", "message_en": "Social Support 01 by radio: passing the central connector.", "result_state": "location received by radio"},
+    {"id": "e018-arrive-fire", "at_seconds": 345, "type": "movement_action", "movement": "fire_movement", "unit": "fire", "action": "arrive", "source": "crew", "message_pt": "Bombeiros 01: chegada ao posto de comando.", "message_en": "Fire 01: arrived at the command post.", "result_state": "arrived"},
+    {"id": "e019-arrive-social", "at_seconds": 375, "type": "movement_action", "movement": "social_movement", "unit": "social", "action": "arrive", "source": "radio", "message_pt": "Apoio Social 01 por rádio: chegada ao centro do vale.", "message_en": "Social Support 01 by radio: arrived at the valley centre.", "result_state": "arrived"},
+    {"id": "e020-complete-fire", "at_seconds": 405, "type": "movement_action", "movement": "fire_movement", "unit": "fire", "action": "complete", "source": "crew", "message_pt": "Bombeiros 01: deslocação concluída; unidade disponível.", "message_en": "Fire 01: movement completed; unit available.", "result_state": "completed"},
+    {"id": "e022-arrive-transport", "at_seconds": 420, "type": "movement_action", "movement": "transport_movement", "unit": "transport", "action": "arrive", "source": "crew", "message_pt": "Transporte 01: chegada ao centro de apoio.", "message_en": "Transport 01: arrived at the support centre.", "result_state": "arrived"},
+    {"id": "e021-complete-social", "at_seconds": 435, "type": "movement_action", "movement": "social_movement", "unit": "social", "action": "complete", "source": "radio", "message_pt": "Apoio Social 01 por rádio: missão concluída.", "message_en": "Social Support 01 by radio: assignment completed.", "result_state": "completed"},
+    {"id": "e023-complete-transport", "at_seconds": 450, "type": "movement_action", "movement": "transport_movement", "unit": "transport", "action": "complete", "source": "crew", "message_pt": "Transporte 01: transporte concluído; viatura disponível.", "message_en": "Transport 01: transport completed; vehicle available.", "result_state": "completed"},
+    {"id": "e024-reopening", "at_seconds": 465, "type": "road_report", "unit": "police", "report": "north_reopening", "segment_id": "north-access", "kind": "reopening", "direction": "both", "reason": "Obstáculo removido; reabertura reportada", "message_pt": "Polícia 01: obstáculo removido no acesso norte. Reabertura proposta para validação.", "message_en": "Police 01: obstruction removed from the northern access. Reopening proposed for validation.", "result_state": "pending review"},
+    {"id": "e025-confirm-reopening", "at_seconds": 480, "type": "review_report", "unit": "civil", "report": "north_reopening", "status": "confirmed", "message_pt": "Proteção Civil 01: reabertura confirmada; restrição encerrada.", "message_en": "Civil Protection 01: reopening confirmed; restriction closed.", "result_state": "restriction resolved"}
+  ]
+}

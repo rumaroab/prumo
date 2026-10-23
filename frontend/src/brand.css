@@ -1,0 +1,26 @@
+.prumo-brand {
+  --prumo-accent: var(--ds-brand-accent);
+  display: inline-block;
+  flex-shrink: 0;
+  height: 28px;
+  width: auto;
+  max-width: 100%;
+  vertical-align: middle;
+  color: var(--ds-text-primary);
+}
+
+.prumo-brand .prumo-ink { fill: currentColor; }
+.prumo-brand .prumo-accent { fill: var(--prumo-accent); }
+.prumo-brand--login { height: 44px; }
+.application-brand { display: inline-flex; align-items: center; }
+.prumo-brief-brand { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--ds-space-2); }
+.prumo-brief-brand .prumo-brand { height: 24px; }
+
+@media (max-width: 600px) {
+  .prumo-brand { height: 24px; }
+  .prumo-brand--login { height: 44px; }
+}
+
+@media print {
+  .prumo-brand { color: black; --prumo-accent: currentColor; }
+}

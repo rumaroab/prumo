@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+input_dir="$1"
+output_dir="$2"
+mkdir -p "$output_dir"
+if [ -x /opt/wrf-sfire/bin/prepare-and-run ]; then
+  /opt/wrf-sfire/bin/prepare-and-run "$input_dir" "$output_dir"
+  exec /opt/forest-fire/postprocess-wrf.py "$output_dir"
+fi
+echo "This image contains pinned WRF-SFIRE source but no site-specific compiled runtime." >&2
+echo "Install a validated /opt/wrf-sfire/bin/prepare-and-run for the target MPI/NetCDF environment." >&2
+exit 78

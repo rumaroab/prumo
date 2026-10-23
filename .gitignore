@@ -1,0 +1,76 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+.cursor/
+.openai/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencies, builds, and caches
+.venv/
+venv/
+.uv-cache/
+node_modules/
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*.tsbuildinfo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.coverage
+.coverage.*
+coverage/
+htmlcov/
+*.log
+*.pid
+
+# Generated deliverables, exports, and temporary working files
+outputs/
+/public_demo_site/
+/cache/
+/tmp/
+
+# Videos and production audio, wherever they are saved
+*.[mM][pP]4
+*.[mM][oO][vV]
+*.[mM]4[vV]
+*.[wW][eE][bB][mM]
+*.[mM][kK][vV]
+*.[aA][vV][iI]
+*.[wW][aA][vV]
+*.[mM][pP]3
+*.[mM]4[aA]
+*.[aA][aA][cC]
+
+# Local databases, downloads, prepared areas, runs, and backups
+/data/*
+!/data/presets/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Downloaded engine checkout; local changes are saved in patches/
+/vendor/*
+!/vendor/.gitkeep

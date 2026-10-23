@@ -1,0 +1,29 @@
+{
+  "area": {
+    "name": "Guimarães water-point area",
+    "center": [-8.3075, 41.4535],
+    "bounds": [-8.4, 41.365, -8.215, 41.542],
+    "processing_margin_m": 1000,
+    "projected_crs": "EPSG:3763",
+    "cell_size_m": 30
+  },
+  "exposure_buffer_m": 30,
+  "worldcover_to_fuel": {
+    "10": 165,
+    "20": 142,
+    "30": 102,
+    "40": 102,
+    "50": 91,
+    "60": 161,
+    "70": 99,
+    "80": 98,
+    "90": 98,
+    "95": 98,
+    "100": 101
+  },
+  "cell2fire": {
+    "revision": "83b0c3bc31fa9bd500ff11400671e48bdc98a237",
+    "local_patch": "scheduled-ignitions-v1+timed-firebreaks-v1",
+    "command": []
+  }
+}

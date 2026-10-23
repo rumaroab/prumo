@@ -1,0 +1,528 @@
+/* Layout and domain-specific states. Shared UI presentation lives in design-tokens.css. */
+@layer legacy {
+  .decision-shell {
+    min-height: 100vh;
+    background: var(--ds-surface-page);
+    color: var(--ds-text-primary);
+    font-family: var(--ds-font-body);
+  }
+  .decision-shell * {
+    box-sizing: border-box;
+  }
+  .decision-shell input,
+  .decision-shell select {
+    font: inherit;
+  }
+  .decision-shell a {
+    color: var(--ds-text-link);
+  }
+  .decision-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-space-6);
+    padding: var(--ds-space-3) var(--ds-space-6);
+    border-bottom: 1px solid var(--ds-border-subtle);
+    background: var(--ds-surface-card);
+  }
+  .decision-header > div {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+  }
+  .decision-header span {
+    font-size: var(--ds-text-sm);
+    color: var(--ds-text-secondary);
+  }
+  .decision-header nav {
+    display: flex;
+    gap: var(--ds-space-1);
+  }
+  .decision-header details summary {
+    border: 0;
+    background: transparent;
+    color: var(--ds-text-secondary);
+    padding: var(--ds-space-2) var(--ds-space-3);
+    border-radius: var(--ds-radius-control);
+  }
+  .decision-header details {
+    position: relative;
+  }
+  .decision-header details a {
+    display: block;
+    background: var(--ds-surface-inset);
+    padding: var(--ds-space-2) var(--ds-space-4);
+    white-space: nowrap;
+  }
+  .decision-header details[open] {
+    z-index: 1100;
+  }
+  .decision-header details[open] a {
+    position: relative;
+  }
+  .decision-layout {
+    display: grid;
+    grid-template-columns: minmax(290px, 340px) minmax(350px, 1fr) minmax(
+        280px,
+        330px
+      );
+    height: calc(100vh - 67px);
+    min-height: 640px;
+  }
+  .decision-input,
+  .decision-output {
+    overflow: auto;
+  }
+  .decision-input > p,
+  .decision-prompt p {
+    color: var(--ds-text-secondary);
+  }
+  .decision-note,
+  .decision-map-caption {
+    color: var(--ds-text-secondary);
+    line-height: var(--ds-small-leading);
+  }
+  .decision-input label,
+  .decision-setup label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-1);
+    margin: var(--ds-space-3) 0;
+    color: var(--ds-text-primary);
+    font-size: var(--ds-text-sm);
+  }
+  .decision-input input,
+  .decision-input select,
+  .decision-setup input,
+  .decision-setup select {
+    width: 100%;
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-radius-control);
+    background: var(--ds-surface-inset);
+    color: var(--ds-text-primary);
+    padding: var(--ds-space-2);
+  }
+  .decision-input small {
+    display: block;
+    color: var(--ds-text-secondary);
+  }
+  .decision-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ds-space-2);
+  }
+  .decision-source {
+    border: 1px solid var(--ds-border-subtle);
+    border-radius: var(--ds-radius-card);
+    margin: var(--ds-space-4) 0;
+    padding: var(--ds-space-2) var(--ds-space-3) var(--ds-space-3);
+  }
+  .decision-source legend {
+    padding: 0 var(--ds-space-1);
+    color: var(--ds-text-primary);
+    font-weight: 700;
+  }
+  .decision-primary {
+    width: 100%;
+  }
+  .decision-stale {
+    background: var(--ds-warning-bg);
+    padding: var(--ds-space-2);
+    border-radius: var(--ds-radius-control);
+  }
+  .decision-input details {
+    margin-top: var(--ds-space-4);
+  }
+  .decision-input details button {
+    width: 100%;
+    display: block;
+    margin: var(--ds-space-2) 0;
+    text-align: left;
+  }
+  .decision-map-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--ds-surface-inset);
+  }
+  .decision-map {
+    flex: 1;
+    min-height: 340px;
+  }
+  .decision-leaflet {
+    height: 100%;
+    width: 100%;
+  }
+  .decision-timeline {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-3) var(--ds-space-5);
+    background: var(--ds-surface-inset);
+  }
+  .decision-timeline input {
+    flex: 1;
+  }
+  .decision-map-caption {
+    font-size: var(--ds-text-sm);
+    margin: 0;
+    padding: var(--ds-space-2) var(--ds-space-4);
+  }
+  .decision-results-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--ds-space-1);
+  }
+  .decision-card {
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: var(--ds-space-3) 0;
+  }
+  .decision-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    margin-bottom: var(--ds-space-2);
+  }
+  /* A/B colors identify compared alternatives, independently of the brand palette. */
+  .decision-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--ds-radius-pill);
+    background: #38bdf8;
+    color: #0f2430;
+  }
+  .decision-b {
+    background: #b68cff;
+  }
+  .decision-status {
+    display: inline-block;
+    font-size: var(--ds-text-sm);
+    font-weight: 700;
+    border-radius: var(--ds-radius-pill);
+    padding: var(--ds-space-1) var(--ds-space-2);
+  }
+  .decision-status.clear {
+    background: var(--ds-success-bg);
+    color: var(--ds-success-text);
+  }
+  .decision-status.infeasible {
+    background: var(--ds-danger-bg);
+    color: var(--ds-danger-text);
+  }
+  .decision-status.unknown {
+    background: var(--ds-warning-bg);
+    color: var(--ds-warning-text);
+  }
+  .decision-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--ds-space-1);
+    margin: var(--ds-space-3) 0;
+    font-size: var(--ds-text-sm);
+    color: var(--ds-text-secondary);
+  }
+  .decision-metrics span {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-1);
+  }
+  .decision-metrics strong {
+    font-size: var(--ds-text-sm);
+    color: var(--ds-text-primary);
+  }
+  .decision-reason,
+  .decision-conflict {
+    display: block;
+    font-size: var(--ds-text-sm);
+    line-height: var(--ds-small-leading);
+    margin-top: var(--ds-space-1);
+  }
+  .decision-conflict {
+    color: var(--ds-warning-text);
+  }
+  .decision-note {
+    font-size: var(--ds-text-sm);
+  }
+  .decision-prompt {
+    margin-top: 30vh;
+  }
+  .decision-prompt span {
+    color: var(--ds-text-secondary);
+  }
+  .decision-provenance {
+    border-top: 1px solid var(--ds-border-subtle);
+    padding-top: var(--ds-space-4);
+    font-size: var(--ds-text-sm);
+    color: var(--ds-text-secondary);
+  }
+  .decision-error {
+    background: var(--ds-danger-bg);
+    color: var(--ds-danger-text);
+    padding: var(--ds-space-2) var(--ds-space-5);
+    margin: 0;
+  }
+  .decision-setup {
+    max-width: 820px;
+    margin: var(--ds-space-12) auto;
+    padding: var(--ds-space-6);
+    background: var(--ds-surface-card);
+    border: 1px solid var(--ds-border-subtle);
+    border-radius: var(--ds-radius-card);
+  }
+  .decision-setup a {
+    display: block;
+    margin: var(--ds-space-4) 0;
+  }
+  @media (max-width: 1150px) {
+    .decision-layout {
+      grid-template-columns: 280px minmax(320px, 1fr);
+      height: auto;
+    }
+    .decision-output {
+      grid-column: 1/-1;
+    }
+    .decision-results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--ds-space-3);
+    }
+    .decision-results-heading,
+    .decision-note {
+      grid-column: 1/-1;
+    }
+    .decision-card {
+      margin: 0;
+    }
+    .decision-map {
+      height: 620px;
+    }
+  }
+  @media (max-width: 700px) {
+    .decision-header {
+      flex-wrap: wrap;
+    }
+    .decision-layout {
+      display: block;
+    }
+    .decision-input,
+    .decision-output {
+      overflow: visible;
+    }
+    .decision-map {
+      height: 430px;
+    }
+    .decision-results {
+      display: block;
+    }
+    .decision-card {
+      margin: var(--ds-space-3) 0;
+    }
+  }
+  .decision-events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-space-2) var(--ds-space-4);
+    padding: var(--ds-space-2) var(--ds-space-4);
+    background: var(--ds-surface-inset);
+    font-size: var(--ds-text-sm);
+    color: var(--ds-text-secondary);
+  }
+  .decision-events > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-space-1) var(--ds-space-2);
+  }
+  .decision-events b {
+    color: var(--ds-text-primary);
+  }
+  .decision-assumptions {
+    display: block;
+    margin-top: var(--ds-space-2);
+    color: var(--ds-text-secondary);
+    font-size: var(--ds-text-sm);
+  }
+  .decision-header > div {
+    flex-wrap: wrap;
+  }
+  .decision-header > div span {
+    max-width: 410px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .decision-perspectives {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-2) var(--ds-space-5);
+    background: var(--ds-surface-inset);
+    border-bottom: 1px solid var(--ds-border-subtle);
+    flex-wrap: wrap;
+  }
+  .decision-variants {
+    display: flex;
+    gap: var(--ds-space-1);
+    margin-left: auto;
+  }
+  .access-summary {
+    display: flex;
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-2) var(--ds-space-5);
+    background: var(--ds-surface-inset);
+    border-bottom: 1px solid var(--ds-border-subtle);
+  }
+  .access-summary button {
+    display: flex;
+    gap: var(--ds-space-1);
+    align-items: center;
+    text-align: left;
+  }
+  .access-summary span {
+    color: var(--ds-text-secondary);
+    font-size: var(--ds-text-sm);
+  }
+  .access-summary strong {
+    font-size: var(--ds-text-sm);
+  }
+  .decision-perspectives ~ .decision-layout {
+    height: calc(100vh - 130px);
+  }
+  .access-summary ~ .decision-layout {
+    height: calc(100vh - 180px);
+  }
+  .access-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-space-2);
+    font-size: var(--ds-text-sm);
+    color: var(--ds-text-secondary);
+    margin: var(--ds-space-3) 0;
+  }
+  .selected-road,
+  .access-impact-count,
+  .population-detail {
+    margin: var(--ds-space-3) 0;
+  }
+  .selected-road p {
+    color: var(--ds-text-secondary);
+  }
+  .access-impact,
+  .population-row,
+  .population-option {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-1);
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--ds-border-subtle);
+    border-radius: var(--ds-radius-control);
+    background: var(--ds-surface-inset);
+    color: var(--ds-text-primary);
+    padding: var(--ds-space-3);
+    margin: var(--ds-space-2) 0;
+  }
+  .access-impact small,
+  .population-row small,
+  .population-option small {
+    color: var(--ds-text-secondary);
+  }
+  .access-impact-count {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-2);
+  }
+  .population-row .decision-status {
+    align-self: flex-start;
+  }
+  .population-editor {
+    color: var(--ds-text-primary);
+  }
+  .population-edit-row {
+    margin: var(--ds-space-2) 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+    gap: var(--ds-space-1) var(--ds-space-3);
+  }
+  .population-edit-row label {
+    margin: var(--ds-space-1) 0;
+  }
+  .population-edit-row small {
+    color: var(--ds-text-secondary);
+  }
+  .decision-input > button:not(.decision-primary) {
+    margin: var(--ds-space-2) 0;
+  }
+  @media (max-width: 700px) {
+    .decision-variants {
+      margin-left: 0;
+    }
+    .access-summary {
+      flex-direction: column;
+    }
+    .population-edit-row {
+      display: block;
+    }
+    .decision-layout .decision-map {
+      flex: none;
+      height: 430px;
+    }
+  }
+  .decision-stale-chip {
+    background: var(--ds-warning-bg);
+    color: var(--ds-warning-text);
+    border-radius: var(--ds-radius-pill);
+    padding: var(--ds-space-2) var(--ds-space-2);
+    font-size: var(--ds-text-sm);
+    font-weight: 700;
+  }
+  .decision-card-title {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+  }
+  .decision-advisories {
+    display: grid;
+    gap: var(--ds-space-2);
+    margin-top: var(--ds-space-2);
+  }
+  .decision-advisory small {
+    display: block;
+    color: var(--ds-text-secondary);
+  }
+  .decision-advisory strong {
+    display: block;
+  }
+  .advisory-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-space-1);
+  }
+  .vehicle-facts {
+    display: grid;
+    gap: var(--ds-space-1);
+    margin: var(--ds-space-2) 0;
+  }
+  .exercise-story {
+    padding: var(--ds-space-3) var(--ds-space-5);
+    background: var(--ds-surface-inset);
+    border-bottom: 1px solid var(--ds-border-subtle);
+    color: var(--ds-text-secondary);
+    font-size: var(--ds-text-sm);
+  }
+  .exercise-story strong {
+    color: var(--ds-text-primary);
+  }
+}

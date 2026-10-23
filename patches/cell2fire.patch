@@ -1,0 +1,297 @@
+diff --git a/Cell2Fire/Cell2Fire.cpp b/Cell2Fire/Cell2Fire.cpp
+index 68a6b8a..730a4d9 100644
+--- a/Cell2Fire/Cell2Fire.cpp
++++ b/Cell2Fire/Cell2Fire.cpp
+@@ -552,6 +552,40 @@ Cell2Fire::Cell2Fire(arguments _args) : CSVForest(_args.InFolder + "fuels", " ")
+     this->activeCrown = false;
+     this->gridNumber = 0;
+     this->fire_period = vector<int>(this->args.TotalYears, 0);
++    if (this->args.ScheduledIgnitions)
++    {
++        std::ifstream scheduled(this->args.InFolder + "ScheduledIgnitions.csv");
++        std::string line;
++        std::getline(scheduled, line); // header
++        while (std::getline(scheduled, line))
++        {
++            if (line.empty()) continue;
++            std::stringstream fields(line);
++            std::string minute, cell;
++            std::getline(fields, minute, ',');
++            std::getline(fields, cell, ',');
++            this->ScheduledIgnitionPoints.push_back(std::make_pair(std::stoi(minute), std::stoi(cell)));
++        }
++        if (this->ScheduledIgnitionPoints.empty())
++            throw std::runtime_error("ScheduledIgnitions.csv has no ignition rows");
++    }
++    if (!this->args.TimedFirebreakPlan.empty())
++    {
++        std::ifstream scheduled(this->args.TimedFirebreakPlan);
++        std::string line;
++        std::getline(scheduled, line); // header
++        while (std::getline(scheduled, line))
++        {
++            if (line.empty()) continue;
++            std::stringstream fields(line);
++            std::string minute, cell;
++            std::getline(fields, minute, ',');
++            std::getline(fields, cell, ',');
++            this->TimedFirebreakPoints.push_back(std::make_pair(std::stoi(minute), std::stoi(cell)));
++        }
++        if (this->TimedFirebreakPoints.empty())
++            throw std::runtime_error("TimedFirebreakCells.csv has no containment rows");
++    }
+ }
+ 
+ /******************************************************************************
+@@ -1411,10 +1445,15 @@ Cell2Fire::GetMessages(const std::unordered_map<int, std::vector<int>>& sendMess
+         {
+             std::cout << "\nNo messages during the fire period, end of year " << this->year << std::endl;
+         }
+-        // Next year, reset weeks, weather period, and update burnt cells from
+-        // burning cells
+-        this->year += 1;
+-        this->weatherPeriod = 0;
++        // Scheduled simulations keep one continuous minute axis so later
++        // ignitions can occur after an earlier fire has gone out.
++        if (this->args.ScheduledIgnitions)
++            this->fire_period[this->year - 1] += 1;
++        else
++        {
++            this->year += 1;
++            this->weatherPeriod = 0;
++        }
+         this->noMessages = true;
+         // Update sets
+         for (auto& bc : this->burningCells)
+@@ -2092,6 +2131,87 @@ Cell2Fire::updateWeather()
+  * and history requirements.
+  *
+  */
++void
++Cell2Fire::ActivateTimedFirebreaks()
++{
++    if (this->TimedFirebreakPoints.empty()) return;
++    const int minute = this->fire_period[this->year - 1];
++    const std::string eventPath = this->args.OutFolder + "timed_firebreak_events.csv";
++    std::ifstream existing(eventPath);
++    const bool needsHeader = !existing.good() || existing.peek() == std::ifstream::traits_type::eof();
++    existing.close();
++    std::ofstream events(eventPath, std::ios::app);
++    if (needsHeader) events << "minute,cell,status\n";
++    for (const auto& scheduled : this->TimedFirebreakPoints)
++    {
++        if (scheduled.first != minute) continue;
++        const int cell = scheduled.second;
++        if (cell < 1 || cell > this->nCells || this->nonBurnableCells.count(cell) > 0)
++        {
++            events << minute << "," << cell << ",unavailable\n";
++            continue;
++        }
++        if (this->burntCells.count(cell) > 0 || this->burningCells.count(cell) > 0)
++        {
++            events << minute << "," << cell << ",breached\n";
++            continue;
++        }
++        this->fTypeCells[cell - 1] = 0;
++        this->fTypeCells2[cell - 1] = "NonBurnable";
++        this->statusCells[cell - 1] = 3;
++        this->availCells.erase(cell);
++        this->Cells_Obj.erase(cell);
++        this->harvestCells.insert(cell);
++        events << minute << "," << cell << ",activated\n";
++    }
++}
++
++void
++Cell2Fire::InjectScheduledIgnitions()
++{
++    const int minute = this->fire_period[this->year - 1];
++    const std::string eventPath = this->args.OutFolder + "ignition_events.csv";
++    std::ifstream existing(eventPath);
++    const bool needsHeader = !existing.good() || existing.peek() == std::ifstream::traits_type::eof();
++    existing.close();
++    std::ofstream events(eventPath, std::ios::app);
++    if (needsHeader) events << "minute,cell,status\n";
++
++    for (const auto& scheduled : this->ScheduledIgnitionPoints)
++    {
++        if (scheduled.first != minute) continue;
++        const int cell = scheduled.second;
++        if (cell < 1 || cell > this->nCells || this->nonBurnableCells.count(cell) > 0 || this->harvestCells.count(cell) > 0)
++        {
++            events << minute << "," << cell << ",unavailable\n";
++            continue;
++        }
++        if (this->burntCells.count(cell) > 0 || this->burningCells.count(cell) > 0)
++        {
++            events << minute << "," << cell << ",already_reached\n";
++            continue;
++        }
++        if (this->Cells_Obj.find(cell) == this->Cells_Obj.end()) this->InitCell(cell);
++        auto it = this->Cells_Obj.find(cell);
++        std::vector<int> points = {cell};
++        if (it->second.ignition(minute, this->year, points, &df[cell - 1], this->coef_ptr,
++                                this->args_ptr, &(this->wdf[this->weatherPeriod]), this->activeCrown,
++                                this->perimeterCells))
++        {
++            this->statusCells[cell - 1] = 1;
++            this->burningCells.insert(cell);
++            this->burntCells.insert(cell);
++            this->availCells.erase(cell);
++            this->nIgnitions++;
++            events << minute << "," << cell << ",ignited\n";
++        }
++        else
++        {
++            events << minute << "," << cell << ",unavailable\n";
++        }
++    }
++}
++
+ void
+ Cell2Fire::Step(boost::random::mt19937 generator, int ep)
+ {
+@@ -2100,6 +2220,28 @@ Cell2Fire::Step(boost::random::mt19937 generator, int ep)
+     std::unordered_map<int, Cells>::iterator it;
+     bool auxC = false;
+     this->noMessages = false;
++    this->ActivateTimedFirebreaks();
++    if (this->args.ScheduledIgnitions)
++    {
++        this->InjectScheduledIgnitions();
++        if (!this->burningCells.empty())
++        {
++            std::unordered_map<int, std::vector<int>> messages = this->SendMessages();
++            this->GetMessages(messages);
++        }
++        else
++        {
++            this->fire_period[this->year - 1] += 1;
++            this->updateWeather();
++        }
++        if (this->fire_period[this->year - 1] >= this->totalFirePeriods)
++        {
++            this->Results();
++            this->done = true;
++            this->sim += 1;
++        }
++        return;
++    }
+     // Conditions entering the step
+     if (this->args.verbose)
+     {
+diff --git a/Cell2Fire/Cell2Fire.h b/Cell2Fire/Cell2Fire.h
+index fecd1d8..95c06f6 100644
+--- a/Cell2Fire/Cell2Fire.h
++++ b/Cell2Fire/Cell2Fire.h
+@@ -28,6 +28,7 @@
+ #include <unordered_map>
+ #include <unordered_set>
+ #include <vector>
++#include <utility>
+ 
+ using namespace std;
+ string C2FW_VERSION = "v0.0.0";
+@@ -116,6 +117,8 @@ class Cell2Fire
+     std::vector<float> crownFlameLengths;
+     std::vector<float> maxFlameLengths;
+     std::vector<std::vector<int>> IgnitionSets;
++    std::vector<std::pair<int, int>> ScheduledIgnitionPoints; // minute, one-based cell
++    std::vector<std::pair<int, int>> TimedFirebreakPoints; // minute, one-based cell
+     // std::vector<int> IgnitionHistory;
+ 
+     // Sets
+@@ -136,6 +139,8 @@ class Cell2Fire
+     string createOutputFolder(string metric);
+     void reset(int rnumber, double rnumber2, int simExt);
+     bool RunIgnition(boost::random::mt19937 generator, int ep);
++    void InjectScheduledIgnitions();
++    void ActivateTimedFirebreaks();
+     std::unordered_map<int, std::vector<int>> SendMessages();
+     void GetMessages(const std::unordered_map<int, std::vector<int>>& sendMessageList);
+     void Results();
+diff --git a/Cell2Fire/ReadArgs.cpp b/Cell2Fire/ReadArgs.cpp
+index 184da89..ae8eb18 100644
+--- a/Cell2Fire/ReadArgs.cpp
++++ b/Cell2Fire/ReadArgs.cpp
+@@ -87,6 +87,13 @@ parseArgs(int argc, char* argv[], arguments* args_ptr)
+     else
+         input_hplan = &empty;
+ 
++    //--TimedFirebreakCells (forest-fire platform extension)
++    char* timed_firebreak_plan = getCmdOption(argv, argv + argc, "--TimedFirebreakCells");
++    if (timed_firebreak_plan)
++        printf("TimedFirebreakCells: %s \n", timed_firebreak_plan);
++    else
++        timed_firebreak_plan = &empty;
++
+     //--weather-weights
+     char* weather_weights_file = getCmdOption(argv, argv + argc, "--weather-weights");
+     if (weather_weights_file)
+@@ -110,6 +117,7 @@ parseArgs(int argc, char* argv[], arguments* args_ptr)
+     bool verbose_input = false;
+     bool iplog_input = false;
+     bool input_ignitions = false;
++    bool scheduled_ignitions = false;
+     bool out_grids = false;
+     bool out_fl = false;
+     bool out_intensity = false;
+@@ -201,6 +209,13 @@ parseArgs(int argc, char* argv[], arguments* args_ptr)
+         printf("Ignitions: %s \n", btoa(input_ignitions));
+     }
+ 
++    //--scheduled-ignitions (forest-fire platform extension)
++    if (cmdOptionExists(argv, argv + argc, "--scheduled-ignitions"))
++    {
++        scheduled_ignitions = true;
++        printf("Scheduled ignitions: %s \n", btoa(scheduled_ignitions));
++    }
++
+     //--grids
+     if (cmdOptionExists(argv, argv + argc, "--grids"))
+     {
+@@ -593,6 +608,7 @@ parseArgs(int argc, char* argv[], arguments* args_ptr)
+     }
+     else
+         args_ptr->HarvestPlan = input_hplan;
++    args_ptr->TimedFirebreakPlan = timed_firebreak_plan == &empty ? "" : timed_firebreak_plan;
+ 
+     // booleans
+     args_ptr->OutMessages = out_messages;
+@@ -607,6 +623,7 @@ parseArgs(int argc, char* argv[], arguments* args_ptr)
+     args_ptr->verbose = verbose_input;
+     args_ptr->IgnitionsLog = iplog_input;
+     args_ptr->Ignitions = input_ignitions;
++    args_ptr->ScheduledIgnitions = scheduled_ignitions;
+     args_ptr->OutputGrids = out_grids;
+     args_ptr->FinalGrid = out_finalgrid;
+     args_ptr->PromTuned = prom_tuned;
+diff --git a/Cell2Fire/ReadArgs.h b/Cell2Fire/ReadArgs.h
+index 00a824a..6664acd 100644
+--- a/Cell2Fire/ReadArgs.h
++++ b/Cell2Fire/ReadArgs.h
+@@ -14,9 +14,9 @@
+  */
+ typedef struct
+ {
+-    std::string InFolder, OutFolder, WeatherOpt, HarvestPlan, Simulator, WeatherWeightsFile;
++    std::string InFolder, OutFolder, WeatherOpt, HarvestPlan, TimedFirebreakPlan, Simulator, WeatherWeightsFile;
+     bool OutMessages, OutFl, OutIntensity, OutRos, OutCrown, OutCrownConsumption, OutSurfConsumption, Trajectories,
+-        NoOutput, verbose, IgnitionsLog, Ignitions, OutputGrids, FinalGrid, PromTuned, Stats, BBOTuning, AllowCROS, UseWeatherWeights;
++        NoOutput, verbose, IgnitionsLog, Ignitions, ScheduledIgnitions, OutputGrids, FinalGrid, PromTuned, Stats, BBOTuning, AllowCROS, UseWeatherWeights;
+     float ROSCV, ROSThreshold, CROSThreshold, HFIThreshold, HFactor, FFactor, BFactor, EFactor, FirePeriodLen;
+     float CBDFactor, CCFFactor, ROS10Factor, CROSActThreshold;
+     int MinutesPerWP, MaxFirePeriods, TotalYears, TotalSims, NWeatherFiles, IgnitionRadius, seed, nthreads, FMC,
+diff --git a/Cell2Fire/makefile.macos b/Cell2Fire/makefile.macos
+index 742fc15..5f51844 100644
+--- a/Cell2Fire/makefile.macos
++++ b/Cell2Fire/makefile.macos
+@@ -52,7 +52,7 @@ tests: $(TEST_TARGET)
+ $(TEST_TARGET): $(TEST_FILES) $(SRCS)
+ 	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TEST_FILES) $(TEST_LDFLAGS)
+ 
+-%.o: %.cpp
++%.o: %.cpp $(wildcard *.h)
+ 	$(CXX) $(CXXFLAGS) -c $< -o $@
+ 
+ clean:

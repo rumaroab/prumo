@@ -1,0 +1,660 @@
+/* Layout and domain-specific states. Shared UI presentation lives in design-tokens.css. */
+@layer legacy {
+  /* Shared interface contract: slate surfaces, serif titles, mono labels, compact corners.
+   Keep cross-workspace styling here so new panels do not inherit the legacy light palette. */
+  /* Controls, supporting text, and feedback shared by all routes and dialogs. */
+  a {
+    color: var(--text-link);
+  }
+  input[type="password"],
+  input[type="date"],
+  input[type="search"] {
+    background: #121f29;
+    border: 1px solid #344956;
+    border-radius: var(--radius-control);
+    color: var(--text-primary);
+    font:
+      12px Inter,
+      "Avenir Next",
+      "Segoe UI",
+      system-ui,
+      sans-serif;
+    margin-top: var(--ds-space-1);
+    padding: var(--ds-space-2) var(--ds-space-2);
+    width: 100%;
+  }
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #91a6b2;
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: #6796a8;
+    flex-shrink: 0;
+  }
+  label,
+  .eyebrow {
+    overflow-wrap: anywhere;
+  }
+  h2 {
+    overflow-wrap: anywhere;
+  }
+  .field-label,
+  .plan-score,
+  .advanced summary,
+  .coordinate,
+  .unit,
+  .exercise-empty,
+  .resource-row span,
+  .rehearsal-timeline span,
+  .source-disclaimer,
+  .incident-list span {
+    color: var(--text-secondary);
+  }
+  .ignition-row > small,
+  .wizard-fire small,
+  .scenario-manager > p,
+  .placeholder-card > p,
+  .exercise-sidebar > p,
+  .exercise-sidebar small,
+  .exercise-panel > small,
+  .mission-list small,
+  .plan-list small,
+  .resource-row small,
+  .experiment-result small,
+  .rehearsal-panel > small,
+  .update-row p,
+  .incident-list small {
+    color: var(--text-secondary);
+  }
+  .app-header nav a b,
+  .scenario-index {
+    color: var(--text-secondary);
+  }
+  .app-header nav a small {
+    color: var(--text-secondary);
+  }
+  .exercise-metric-strip.loading,
+  .exercise-metric-strip.unavailable {
+    color: var(--text-secondary);
+  }
+  .revision-banner {
+    background: var(--warning-bg);
+    border-color: #806b42;
+    color: var(--warning-text);
+  }
+  .load-error,
+  .exercise-error,
+  .scenario-manager .manager-error,
+  .scenario-wizard .failure,
+  .scenario-card .confirm-row {
+    background: var(--danger-bg);
+    border-color: var(--ds-danger-border);
+    color: var(--danger-text);
+  }
+  .scenario-manager .manager-notice {
+    color: var(--success-text);
+  }
+  .simulated-progress {
+    background: #29253e;
+    border-color: var(--decision);
+    color: #c6b8e3;
+  }
+  .status-pill {
+    background: var(--surface-inset);
+    color: var(--text-secondary);
+  }
+  .advanced {
+    border-color: var(--border-panel);
+  }
+  .operation-notice,
+  .result-note-list,
+  .management-error,
+  .inline-error,
+  .unsent,
+  .simulated-progress,
+  .wizard-map,
+  .wizard-review > label,
+  .landscape-estimate,
+  .member-list > div,
+  .coming-soon,
+  .placeholder-card {
+    border-radius: var(--radius-panel);
+  }
+  .toggle input {
+    display: block;
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+  }
+  .toggle input:focus-visible + span {
+    outline: 2px solid var(--text-link);
+    outline-offset: 3px;
+  }
+  .app-header nav a:focus-visible,
+  .exercise-header nav a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--text-link);
+    outline-offset: -2px;
+  }
+  /* Exercise map, missions, plans, resources, updates, and rehearsal. */
+  .exercise-shell,
+  .exercise-loading {
+    background: var(--surface-page);
+    color: var(--text-primary);
+  }
+  .exercise-shell {
+    display: flex;
+    flex-direction: column;
+  }
+  .exercise-header {
+    background: #101a23;
+    border-bottom: 1px solid var(--line);
+    gap: var(--ds-space-4);
+  }
+  .exercise-brand a:first-child {
+    font-family: var(--display);
+  }
+  .exercise-brand a:last-child {
+    color: var(--text-secondary);
+  }
+  .exercise-header nav {
+    align-self: stretch;
+    gap: 0;
+    min-width: 0;
+  }
+  .exercise-header nav a {
+    border-left: 1px solid var(--line);
+    border-radius: 0;
+    color: var(--text-secondary);
+    justify-content: center;
+    position: relative;
+    white-space: nowrap;
+  }
+  .exercise-header nav a:last-child {
+    border-right: 1px solid var(--line);
+  }
+  .exercise-header nav a:hover {
+    background: var(--surface-panel);
+    color: var(--text-primary);
+  }
+  .exercise-header nav small {
+    color: var(--text-secondary);
+  }
+  .fire-analysis-link {
+    background: var(--surface-selected);
+    border: 1px solid var(--border-panel);
+    border-radius: var(--radius-control);
+    color: var(--text-link);
+  }
+  .exercise-sidebar,
+  .exercise-panel {
+    min-width: 0;
+  }
+  .exercise-sidebar section {
+    border-color: var(--line);
+  }
+  .exercise-panel > h2 {
+    color: var(--text-secondary);
+  }
+  .exercise-content > header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: var(--ds-space-5);
+  }
+  .exercise-map {
+    border: 1px solid var(--border-panel);
+    border-radius: var(--radius-panel);
+    min-width: 0;
+  }
+  .exercise-counts > div,
+  .exercise-metric-strip > span,
+  .management-shell .exercise-metric-strip > span {
+    background: var(--surface-inset);
+    border-radius: var(--radius-control);
+    border-top: 2px solid #4f6b78;
+  }
+  .exercise-counts strong,
+  .exercise-metric-strip strong {
+    color: var(--text-primary);
+    font: 500 22px var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .exercise-counts span {
+    color: var(--text-secondary);
+    font: 700 10px/1.45 var(--mono);
+  }
+  .exercise-metric-strip small,
+  .management-shell .exercise-metric-strip small {
+    color: var(--text-secondary);
+  }
+  .selection-card,
+  .resource-row,
+  .update-row,
+  .experiment-result {
+    min-width: 0;
+  }
+  .mission-list article,
+  .plan-list article,
+  .assignment-list div,
+  .rehearsal-timeline div,
+  .exercise-event-form {
+    background: var(--surface-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    min-width: 0;
+  }
+  .priority {
+    background: var(--surface-selected);
+    color: var(--text-primary);
+    border-radius: var(--radius-control);
+  }
+  .priority.p5 {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+  }
+  .priority.p4 {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+  }
+  .check-row input {
+    accent-color: #6796a8;
+  }
+  .check-row strong {
+    color: var(--text-primary);
+    float: none;
+  }
+  /* Fogos import, provenance, resource overrides, and observation comparison. */
+  .import-tabs {
+    flex-wrap: wrap;
+  }
+  .incident-list article,
+  .existing-links {
+    border-color: var(--border-panel);
+    border-radius: var(--radius-panel);
+  }
+  .incident-list article {
+    background: var(--surface-inset);
+  }
+  .external-context-summary {
+    background: var(--surface-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  .fogos-context {
+    border-color: var(--line);
+  }
+  .external-incident-panel,
+  .overview-grid:has(.exercise-metric-strip) .experiments-panel {
+    grid-column: 1 / -1;
+  }
+  .external-incident-panel .fogos-context {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  .fogos-resource-card,
+  .operations-page .fogos-resource-card,
+  .management-shell .fogos-resource-card {
+    min-width: 0;
+  }
+  .resource-counts > span,
+  .operations-page .resource-counts > span,
+  .management-shell .resource-counts > span {
+    background: var(--surface-selected);
+    border-radius: var(--radius-control);
+    min-width: 0;
+    color: var(--text-primary);
+  }
+  .resource-counts strong {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .override-indicator {
+    color: var(--warning-text);
+  }
+  .source-disclaimer {
+    line-height: 1.5;
+  }
+  .fogos-resource-card small,
+  .fogos-context small {
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+  }
+  /* Match mobility, crew, login, and shared briefs to the same corner and text system. */
+  .mobility-head-actions a,
+  .mobility-panel fieldset,
+  .summary-stats,
+  .brief-facts span,
+  .status-columns > section,
+  .updates-grid > section,
+  .updates-grid article,
+  .login-page form {
+    border-radius: var(--radius-panel);
+  }
+  .mobility-head-actions small,
+  .updates-grid article small,
+  .status-columns button small {
+    color: var(--text-secondary);
+  }
+  .mobility-header > div:first-child span,
+  .updates-grid article span,
+  .inventory-item span,
+  .status-columns button span {
+    color: var(--text-secondary);
+  }
+  /* Layouts shrink with their container; only navigation and boards scroll horizontally. */
+  .overview-grid > *,
+  .exercise-two-column > *,
+  .exercise-grid-three > *,
+  .import-preview-grid > *,
+  .two-col > *,
+  .three-col > *,
+  .section-heading > *,
+  .management-header > *,
+  .mission-list article > *,
+  .plan-list article > *,
+  .update-row > *,
+  .inventory-item > *,
+  .mobility-header > *,
+  .inputs-panel dd {
+    min-width: 0;
+  }
+  .two-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .three-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .overview-grid {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
+  }
+  .exercise-two-column {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr);
+  }
+  .fogos-resource-groups {
+    grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  }
+  .exercise-metric-strip {
+    grid-template-columns: repeat(auto-fit, minmax(min(110px, 100%), 1fr));
+  }
+  .mobility-metric-strip {
+    grid-template-columns: repeat(auto-fit, minmax(min(125px, 100%), 1fr));
+  }
+  .mobility-metric-strip.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mobility-metric-strip small,
+  .mobility-metric-strip.compact small {
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+  }
+  .mobility-metric-strip strong,
+  .resource-counts strong {
+    overflow-wrap: anywhere;
+  }
+  .section-heading,
+  .mission-list article,
+  .plan-list article,
+  .allocation-heading,
+  .allocation-actions,
+  .drawing-tools,
+  .card-metadata,
+  .member-list > div,
+  .route-card > div {
+    flex-wrap: wrap;
+  }
+  .comparison-summary,
+  .inventory-item,
+  .allocation-progress {
+    flex-wrap: wrap;
+  }
+  .section-heading select {
+    max-width: 100%;
+  }
+  .exercise-panel strong,
+  .external-context-summary,
+  .summary-movement {
+    overflow-wrap: anywhere;
+  }
+  .source-summary,
+  .source-changes,
+  .weather-context,
+  .evaluation-result,
+  .inventory-item,
+  .print-brief {
+    overflow-wrap: anywhere;
+  }
+  .allocation-card,
+  .source-card {
+    overflow-wrap: anywhere;
+  }
+  .controls small {
+    overflow-wrap: anywhere;
+  }
+  .scenario-cards {
+    grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
+  }
+  .scenario-index {
+    max-width: calc(100% - 135px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .metadata-modal {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+  }
+  .scenario-manager {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+  }
+  .modal-backdrop,
+  .wizard-backdrop {
+    padding: var(--ds-space-4);
+  }
+  .metadata-modal,
+  .scenario-wizard,
+  .fogos-import-modal {
+    max-width: 100%;
+  }
+  .scenario-row label {
+    min-width: min(220px, 100%);
+  }
+  .timeline {
+    flex-wrap: wrap;
+  }
+  .timeline-track {
+    min-width: 100px;
+  }
+  .timeline > .forecast-options {
+    flex-shrink: 0;
+  }
+  .exercise-event-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+  .map-actions {
+    flex-wrap: wrap;
+    right: 16px;
+    pointer-events: none;
+  }
+  .map-actions button {
+    pointer-events: auto;
+  }
+  .mobility-map-layout {
+    position: relative;
+  }
+  .mobility-shell:has(.mobility-map-layout) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  .mobility-shell .mobility-map-layout,
+  .mobility-shell:has(.demo-banner) .mobility-map-layout {
+    flex: 1;
+    height: auto;
+    min-height: 300px;
+  }
+  @media (min-width: 761px) and (max-width: 1100px) {
+    .management-header {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .overview-grid {
+      grid-template-columns: 1fr;
+    }
+    .wizard-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .exercise-header {
+      grid-template-columns: 1fr auto;
+    }
+    .exercise-header nav {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      overflow-x: auto;
+      justify-content: flex-start;
+    }
+    .fire-analysis-link {
+      display: block;
+    }
+    .exercise-map-page {
+      height: calc(100dvh - 145px);
+      min-height: 520px;
+    }
+  }
+  @media (max-width: 760px) {
+    .overview-grid,
+    .exercise-two-column,
+    .exercise-grid-three,
+    .import-preview-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .exercise-header nav {
+      overflow-x: auto;
+    }
+    .exercise-map-page {
+      height: auto;
+    }
+    .exercise-map .map,
+    .exercise-map .map-frame {
+      height: 100%;
+      min-height: 0;
+    }
+    .exercise-event-form,
+    .rehearsal-timeline {
+      grid-template-columns: minmax(0, 1fr);
+      margin-top: var(--ds-space-3);
+    }
+    .rehearsal-panel > small {
+      display: block;
+    }
+    .import-filters,
+    .coordinate-fields {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .incident-list article {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .setup-topbar {
+      align-items: flex-start;
+      gap: var(--ds-space-3);
+      padding: var(--ds-space-2) 0;
+    }
+    .setup-topbar .breadcrumb {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+    .status {
+      flex-wrap: wrap;
+    }
+    .result-warnings {
+      max-width: calc(100% - 24px);
+      bottom: 130px;
+      right: 12px;
+    }
+  }
+  @media (max-width: 480px) {
+    .exercise-counts {
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    }
+    .timeline .forecast-options {
+      margin-left: auto;
+    }
+    .ignition-row,
+    .wizard-fire {
+      grid-template-columns: 24px minmax(0, 1fr);
+    }
+    .ignition-row > label {
+      width: auto;
+    }
+    .wizard-fire > label {
+      grid-column: 2;
+    }
+    .crew-secondary {
+      grid-template-columns: 1fr;
+    }
+    .mobility-header {
+      gap: var(--ds-space-2);
+    }
+    .mobility-header nav {
+      min-width: 0;
+      overflow-x: auto;
+    }
+    .mobility-head-actions {
+      flex-wrap: wrap;
+    }
+    .mobility-brand {
+      font-size: 18px;
+    }
+  }
+  /* Shared briefs follow the app on screen; paper output retains its readable light palette. */
+  @media screen {
+    .print-brief h1 {
+      color: var(--text-primary);
+    }
+    .print-brief h2 {
+      color: var(--text-secondary);
+    }
+    .print-brief footer {
+      color: var(--text-secondary);
+    }
+    .print-brief dt,
+    .print-brief dd {
+      border-color: var(--line);
+    }
+    .brief-warning {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+    }
+  }
+  @media print {
+    body {
+      background: white;
+      color: #18231e;
+      color-scheme: light;
+    }
+    .brief-page {
+      color-scheme: light;
+    }
+    .print-brief {
+      color-scheme: light;
+    }
+    .print-brief h1 {
+      color: #18231e;
+    }
+    .print-brief h2 {
+      color: #4d5c54;
+    }
+  }
+}
